@@ -25,7 +25,6 @@
 /* Begin PBXFileReference section */
 		03686AF51F92806F008059C2 /* Visibility Graph Path Planning */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Visibility Graph Path Planning"; sourceTree = BUILT_PRODUCTS_DIR; };
 		03686AF81F92806F008059C2 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		03686B371F928448008059C2 /* A-star Search 2 */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "A-star Search 2"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -42,7 +41,6 @@
 		03686AEC1F92806F008059C2 = {
 			isa = PBXGroup;
 			children = (
-				03686B371F928448008059C2 /* A-star Search 2 */,
 				03686AF71F92806F008059C2 /* Visibility Graph Path Planning */,
 				03686AF61F92806F008059C2 /* Products */,
 			);
