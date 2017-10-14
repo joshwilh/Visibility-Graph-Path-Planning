@@ -13,7 +13,7 @@
 /* Begin PBXCopyFilesBuildPhase section */
 		03686AF31F92806F008059C2 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 8;
 			dstPath = /usr/share/man/man1/;
 			dstSubfolderSpec = 0;
 			files = (
@@ -34,6 +34,7 @@
 		03F76ABD1F928ABD00D8AFCC /* Tree_Node.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Tree_Node.h; sourceTree = "<group>"; };
 		03F76ABE1F928ABD00D8AFCC /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		03F76ABF1F928ABD00D8AFCC /* Tree.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Tree.cpp; sourceTree = "<group>"; };
+		03F76AC41F929ED100D8AFCC /* polygons.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = polygons.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,6 +69,7 @@
 			isa = PBXGroup;
 			children = (
 				03686AF81F92806F008059C2 /* main.cpp */,
+				03F76AC41F929ED100D8AFCC /* polygons.txt */,
 			);
 			path = "Visibility Graph Path Planning";
 			sourceTree = "<group>";
