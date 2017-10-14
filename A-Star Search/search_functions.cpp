@@ -101,7 +101,6 @@ void expand(Tree &searchTree, vector<char> closedList,
         
         if (addThisState) {
             // Create new node, add to tree and open list
-            //TODO: Do dynamic memory for new nodes
             List newNodeChildren;
             int newPathCost = expandedNode->pathCost + cityDistances.at(i);
             int newFCost = newPathCost + straightLineDist(possibleStates.at(i));
