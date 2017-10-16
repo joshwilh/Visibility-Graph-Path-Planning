@@ -25,16 +25,17 @@
 /* Begin PBXFileReference section */
 		03686AF51F92806F008059C2 /* Visibility Graph Path Planning */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Visibility Graph Path Planning"; sourceTree = BUILT_PRODUCTS_DIR; };
 		03686AF81F92806F008059C2 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		03A7546C1F94D9C80022091A /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.txt; path = "Visibility Graph Path Planning/README.txt"; sourceTree = SOURCE_ROOT; };
 		03F76AB71F928ABC00D8AFCC /* search_functions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = search_functions.h; sourceTree = "<group>"; };
 		03F76AB81F928ABC00D8AFCC /* List.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = List.cpp; sourceTree = "<group>"; };
 		03F76AB91F928ABC00D8AFCC /* List.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = List.h; sourceTree = "<group>"; };
-		03F76ABA1F928ABD00D8AFCC /* List_Node.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = List_Node.h; sourceTree = "<group>"; };
 		03F76ABB1F928ABD00D8AFCC /* Tree.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Tree.h; sourceTree = "<group>"; };
 		03F76ABC1F928ABD00D8AFCC /* search_functions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = search_functions.cpp; sourceTree = "<group>"; };
 		03F76ABD1F928ABD00D8AFCC /* Tree_Node.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Tree_Node.h; sourceTree = "<group>"; };
 		03F76ABE1F928ABD00D8AFCC /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		03F76ABF1F928ABD00D8AFCC /* Tree.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Tree.cpp; sourceTree = "<group>"; };
 		03F76AC41F929ED100D8AFCC /* polygons.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = polygons.txt; sourceTree = "<group>"; };
+		03F76AC61F92A2D000D8AFCC /* preprocessing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = preprocessing.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,7 +69,11 @@
 		03686AF71F92806F008059C2 /* Visibility Graph Path Planning */ = {
 			isa = PBXGroup;
 			children = (
+				03A7546C1F94D9C80022091A /* README.txt */,
+				03F76AB81F928ABC00D8AFCC /* List.cpp */,
+				03F76AB91F928ABC00D8AFCC /* List.h */,
 				03686AF81F92806F008059C2 /* main.cpp */,
+				03F76AC61F92A2D000D8AFCC /* preprocessing.h */,
 				03F76AC41F929ED100D8AFCC /* polygons.txt */,
 			);
 			path = "Visibility Graph Path Planning";
@@ -77,9 +82,6 @@
 		03F76AB61F928A9F00D8AFCC /* A-Star Search */ = {
 			isa = PBXGroup;
 			children = (
-				03F76ABA1F928ABD00D8AFCC /* List_Node.h */,
-				03F76AB81F928ABC00D8AFCC /* List.cpp */,
-				03F76AB91F928ABC00D8AFCC /* List.h */,
 				03F76ABE1F928ABD00D8AFCC /* main.cpp */,
 				03F76ABC1F928ABD00D8AFCC /* search_functions.cpp */,
 				03F76AB71F928ABC00D8AFCC /* search_functions.h */,

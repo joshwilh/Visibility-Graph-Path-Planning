@@ -11,6 +11,7 @@
 #include <fstream>
 #include <vector>
 #include <cassert>
+#include "List.h"
 
 using namespace std;
 
@@ -43,6 +44,15 @@ int main(int argc, const char * argv[]) {
     
     polygon_fin.close();
     
+    // Testing List
+    /*
+     * List<int> testList;
+     * int x = 5;
+     * testList.insertStart(&x);
+     * cout << testList.removeEnd() << endl;
+     * testList.insertByValue(&x); // Should cause compiler error
+     */
+     
     return 0;
 }
 

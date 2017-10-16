@@ -8,23 +8,25 @@
 
 #include <iostream>
 #include <cassert>
-#include "Tree_Node.h"
+//#include "Tree_Node.h"
 #include "List.h"
 using namespace std;
 
 // Constructs empty list
-List::List() {
+template <typename T>
+List<T>::List() {
     // Set to null to avoid garbage value
     head = nullptr;
     tail = nullptr;
 }
 
 // Destructor: Deletes all nodes in list
-List::~List() {
+template <typename T>
+List<T>::~List() {
     if(!empty()) {
         // Delete all nodes
-        List_Node* current = head;
-        List_Node* after = head->next;
+        List_Node<T>* current = head;
+        List_Node<T>* after = head->next;
         
         delete current;
         while (after != nullptr) {
@@ -36,8 +38,9 @@ List::~List() {
 }
 
 // Adds a node to the end of the list
-void List::insertEnd(Tree_Node* nodePtr) {
-    List_Node *temp = new List_Node;
+template <typename T>
+void List<T>::insertEnd(T* nodePtr) {
+    List_Node<T> *temp = new List_Node<T>;
     temp->data = nodePtr;
     temp->next = nullptr;
     if(head == nullptr) {
@@ -55,8 +58,9 @@ void List::insertEnd(Tree_Node* nodePtr) {
 }
 
 // Adds a node to the beginning of the list
-void List::insertStart(Tree_Node* nodePtr) {
-    List_Node *temp = new List_Node;
+template <typename T>
+void List<T>::insertStart(T* nodePtr) {
+    List_Node<T> *temp = new List_Node<T>;
     temp->data = nodePtr;
     if(head == nullptr) {
         // Empty List
@@ -71,17 +75,25 @@ void List::insertStart(Tree_Node* nodePtr) {
     }
 }
 
-// Adds a node to the list based on its f-cost
-// Node is inserted such that all nodes are sorted by f-cost
-// smallest to largest from head to tail
-void List::insertByValue(Tree_Node* nodePtr) {
+// Calls private function of same name
+template <typename T>
+void List<T>::insertByValue(T* nodePtr) {
+    insertByValue(nodePtr, id<T>());
+}
+
+// FOR TYPE T == Tree_Node:
+//      Adds a node to the list based on its f-cost
+//      Node is inserted such that all nodes are sorted by f-cost
+//      smallest to largest from head to tail
+template <typename T>
+void List<T>::insertByValue(T* nodePtr, id<Tree_Node>) {
     // If list empty, insert using insertStart
     if (empty()) {
         insertStart(nodePtr);
         return;
     }
     
-    List_Node *temp = new List_Node;
+    List_Node<T> *temp = new List_Node<T>;
     temp->data = nodePtr;
     
     int newFCost = nodePtr->fCost;
@@ -93,8 +105,8 @@ void List::insertByValue(Tree_Node* nodePtr) {
     }
     
     // Traverse list
-    List_Node *current = head;
-    List_Node *after = head->next;
+    List_Node<T> *current = head;
+    List_Node<T> *after = head->next;
     while (after != nullptr) {
         if (newFCost < after->data->fCost) {
             // Found node to insert before (after)
@@ -113,7 +125,8 @@ void List::insertByValue(Tree_Node* nodePtr) {
 
 // Removes the node at the end of the list and returns its data
 // WARNING: SLOW in this implementation
-Tree_Node* List::removeEnd() {
+template <typename T>
+T* List<T>::removeEnd() {
     // Check if empty list
     assert(head != nullptr);
     
@@ -123,22 +136,23 @@ Tree_Node* List::removeEnd() {
     }
     else {
         // Traverse list, end when "current" is second to last node and "after" is tail
-        List_Node *current = head;
-        List_Node *after = current->next;
+        List_Node<T> *current = head;
+        List_Node<T> *after = current->next;
         while (after->next != nullptr) {
             current = after;
             after = current->next;
         }
         current->next = nullptr;
         tail = current;
-        Tree_Node* returnData = after->data;
+        T* returnData = after->data;
         delete after;
         return returnData;
     }
 }
 
 // Removes the node at the beginning of the list and returns its data
-Tree_Node* List::removeStart() {
+template <typename T>
+T* List<T>::removeStart() {
     // Check if empty list
     assert(head != nullptr);
     
@@ -146,15 +160,16 @@ Tree_Node* List::removeStart() {
         // Single node
         return deleteSingleNode();
     }
-    List_Node *temp = head;
+    List_Node<T> *temp = head;
     head = temp->next;
-    Tree_Node* returnData = temp->data;
+    T* returnData = temp->data;
     delete temp;
     return returnData;
 }
 
-// Removes the node with data == nodePtr and returns its data
-Tree_Node* List::removeValue(Tree_Node* delPtr) {
+// Removes the node with data == delPtr and returns its data
+template <typename T>
+T* List<T>::removeValue(T* delPtr) {
     // Check if empty list
     assert(head != nullptr);
     
@@ -168,8 +183,8 @@ Tree_Node* List::removeValue(Tree_Node* delPtr) {
         return removeStart();
     }
     
-    List_Node *current = head;
-    List_Node *after = current->next;
+    List_Node<T> *current = head;
+    List_Node<T> *after = current->next;
     
     while (after->data != delPtr && after->next != nullptr) {
         current = after;
@@ -194,14 +209,16 @@ Tree_Node* List::removeValue(Tree_Node* delPtr) {
 }
 
 // Checks if list is empty
-bool List::empty() {
+template <typename T>
+bool List<T>::empty() {
     return head == nullptr;
 }
 
 // Encapsulates code to delete the last node of the list
-Tree_Node* List::deleteSingleNode() {
-    List_Node *temp = tail;
-    Tree_Node* returnData = temp->data;
+template <typename T>
+T* List<T>::deleteSingleNode() {
+    List_Node<T> *temp = tail;
+    T* returnData = temp->data;
     head = nullptr;
     tail = nullptr;
     delete temp;
