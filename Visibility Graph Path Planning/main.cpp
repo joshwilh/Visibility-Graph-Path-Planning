@@ -12,6 +12,7 @@
 #include <vector>
 #include <cassert>
 #include "List.h"
+#include "preprocessing.h"
 
 using namespace std;
 
@@ -52,6 +53,10 @@ int main(int argc, const char * argv[]) {
      * cout << testList.removeEnd() << endl;
      * testList.insertByValue(&x); // Should cause compiler error
      */
+    
+    // Testing addVertices
+    Graph g;
+    addVertices(g, polygons);
      
     return 0;
 }
