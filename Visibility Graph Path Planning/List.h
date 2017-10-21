@@ -55,6 +55,7 @@ public:
     // Adds a node to the beginning of the list
     void insertStart(T* nodePtr);
     
+    // TODO: Improve with <, > operator overload
     // Calls private function of same name
     void insertByValue(T* nodePtr);
     
