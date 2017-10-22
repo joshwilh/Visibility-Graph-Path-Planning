@@ -29,7 +29,7 @@
 		03A7546C1F94D9C80022091A /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.txt; path = "Visibility Graph Path Planning/README.txt"; sourceTree = SOURCE_ROOT; };
 		03A7546D1F94E66A0022091A /* preprocessing.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = preprocessing.cpp; sourceTree = "<group>"; };
 		03F76AB71F928ABC00D8AFCC /* search_functions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = search_functions.h; sourceTree = "<group>"; };
-		03F76AB81F928ABC00D8AFCC /* List.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = List.cpp; sourceTree = "<group>"; };
+		03F76AB81F928ABC00D8AFCC /* List.tpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = List.tpp; sourceTree = "<group>"; };
 		03F76AB91F928ABC00D8AFCC /* List.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = List.h; sourceTree = "<group>"; };
 		03F76ABB1F928ABD00D8AFCC /* Tree.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Tree.h; sourceTree = "<group>"; };
 		03F76ABC1F928ABD00D8AFCC /* search_functions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = search_functions.cpp; sourceTree = "<group>"; };
@@ -72,7 +72,7 @@
 			isa = PBXGroup;
 			children = (
 				03A7546C1F94D9C80022091A /* README.txt */,
-				03F76AB81F928ABC00D8AFCC /* List.cpp */,
+				03F76AB81F928ABC00D8AFCC /* List.tpp */,
 				03F76AB91F928ABC00D8AFCC /* List.h */,
 				03686AF81F92806F008059C2 /* main.cpp */,
 				03A7546D1F94E66A0022091A /* preprocessing.cpp */,

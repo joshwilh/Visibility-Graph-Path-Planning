@@ -7,6 +7,7 @@
 //
 
 #include <stdio.h>
+#include <cmath>
 #include "preprocessing.h"
 
 using namespace std;
@@ -31,24 +32,105 @@ static int orientation (Vertex const p1, Vertex const p2, Vertex const p3) {
 }
 
 // REQUIRES: graph is an empty Graph, polygons contains vectors of polygon
-//           coordinates in the correct format.
-// MODIFIES: graph
+//           coordinates in the correct format, polygonEdges is an empty vector.
+// MODIFIES: graph, polygonEdges
 // EFFECTS : all of the vertices in polygons are added to graph with empty
-//           'connections' lists
-void addVertices(Graph &graph,
-                 vector<std::vector<double> > const &polygons) {
+//           'connections' lists, fills polygonEdges with edges to be used in
+//           the visible function
+void addVerticesAndEdges(Graph &graph,
+                         std::vector<std::vector<double> > const &polygons,
+                         std::vector<Edge> &polygonEdges) {
+    // Check graph and polygonEdges are empty
+    assert(graph.vertices.empty());
+    assert(polygonEdges.empty());
+    
     // Make empty list to add to graph
     List<Vertex> vertices;
     graph.vertices = vertices;
     
-    for (int i = 0; i < polygons.size(); ++i) {
-        for (int j = 0; j < polygons[i].size(); j += 2) {
-            Vertex *newVert = new Vertex;
-            newVert->xPos = polygons[i][j];
-            newVert->yPos = polygons[i][j+1];
-            graph.vertices.insertEnd(newVert);
+    for (int polygon = 0; polygon < polygons.size(); ++polygon) {
+        
+        // Can't have a polygon with fewer than 3 vertices (6 coordinates)
+        assert(polygons[polygon].size() >= 6);
+        
+        // Add first vertex, keep in storage between loops
+        Vertex* newVert = new Vertex;
+        newVert->xPos = polygons[polygon][0];
+        newVert->yPos = polygons[polygon][1];
+        graph.vertices.insertEnd(newVert);
+        
+        Vertex currentVertex = *newVert;
+        
+        for (int j = 2; j < polygons[polygon].size() - 1; j += 2) {
+            // Each vertex in this polygon after the first
+            
+            Vertex *newVert1 = new Vertex;
+            newVert1->xPos = polygons[polygon][j];
+            newVert1->yPos = polygons[polygon][j+1];
+            graph.vertices.insertEnd(newVert1);
+            
+            // Each edge except the last (from last vertex to first vertex)
+            Edge newEdge = {currentVertex, *newVert1};
+            polygonEdges.push_back(newEdge);
+            
+            currentVertex = *newVert1;
+        }
+        
+        // Create edge that goes from last vertex (currentVertex) in list to
+        // first vertex (*newVert)
+        Edge newEdge = {currentVertex, *newVert};
+        polygonEdges.push_back(newEdge);
+    }
+}
+
+// REQUIRES: v is a vertex in graph. graph and polygonEdges have been
+//           successfully passed through addVerticesAndEdges, v is not in the
+//           interior of a polygon
+// MODIFIES: *v, graph
+// EFFECTS : adds all visible vertices from v that are indexed higher (listed
+//           later) in graph to v's connections as edges, and adds v to those
+//           vertices' connections lists, in both cases with distances
+void visibleVertices(Vertex *v, Graph &graph,
+                     std::vector<Edge> const &polygonEdges) {
+    Vertex * check = graph.vertices.nextItem(v);
+    
+    // Loop through higher-indexed vertices above v
+    while (check != nullptr) {
+        if (visible(*v, *check, polygonEdges)) {
+            // check is visible from v and vice versa, build an edge
+            double distance = sqrt(pow(check->xPos - v->xPos, 2) +
+                                   pow(check->yPos - v->yPos, 2));
+            Edge* newEdge = new Edge;
+            *newEdge = {*v, *check, distance};
+            
+            //Place edge in both vertices' connections lists
+            v->connections.insertEnd(newEdge);
+            check->connections.insertEnd(newEdge);
+        }
+        
+        // Increment check to next vertex
+        check = graph.vertices.nextItem(check);
+    }
+}
+
+// REQUIRES: v and check are valid vertices; v != check;
+//           v and check are not in the interior of a polgon
+//           polygonEdges has been properly constructed in generateEdges
+// EFFECTS : returns true if check is visible from v (the line segment
+//           connecting check and v does intersect any polygon edges);
+//           returns false otherwise
+bool visible(Vertex const v, Vertex const check,
+             std::vector<Edge> const polygonEdges) {
+    
+    // Check all polygon edges for intersection
+    for (int i = 0; i < polygonEdges.size(); ++i) {
+        if (intersect(v, check, polygonEdges.at(i).v1, polygonEdges.at(i).v2)) {
+            return false;
         }
     }
+    
+    // No intersections found
+    return true;
 }
 
 // REQUIRES: all parameters are valid vertices.
@@ -75,39 +157,4 @@ bool intersect(Vertex const a1, Vertex const a2,
     }
     // All others
     return false;
-}
-
-// REQUIRES: v and check are valid vertices; v != check;
-//           v and check are not in the interior of a polgon
-// EFFECTS : returns true if check is visible from v (the line segment
-//           connecting check and v does intersect any polygon edges);
-//           returns false otherwise
-bool visible(Vertex const v, Vertex const check,
-             std::vector<std::vector<double> > const &polygons) {
-    vector<vector<Vertex> > edges;
-    for (int polygon = 0; polygon < polygons.size(); ++polygon) {
-        // Build edges
-        for (int i = 0; i < polygons[polygon].size() - 3; i += 2) {
-            Vertex e1 = {polygons[polygon][i], polygons[polygon][i+1]};
-            Vertex e2 = {polygons[polygon][i+2], polygons[polygon][i+3]};
-            vector<Vertex> edge = {e1, e2};
-            edges.push_back(edge);
-        }
-        // Create edge that goes from last vertex in list to first vertex
-        Vertex e1 = {polygons[polygon][0], polygons[polygon][1]};
-        Vertex e2 = {polygons[polygon][polygons.size() - 2],
-                     polygons[polygon][polygons.size() - 1]};
-        vector<Vertex> edge = {e1, e2};
-        edges.push_back(edge);
-    }
-    
-    // Check all edges for intersection
-    for (int i = 0; i < edges.size(); ++i) {
-        if (intersect(v, check, edges.at(i).at(0), edges.at(i).at(1))) {
-            return false;
-        }
-    }
-    
-    // No intersections found
-    return true;
 }

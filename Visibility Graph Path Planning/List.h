@@ -69,6 +69,12 @@ public:
     // Removes the node with data == delPtr and returns its data
     T* removeValue(T* delPtr);
     
+    // REQUIRES: currentItem is a pointer to a data member of a List_Node in
+    //           List
+    // EFFECTS : returns the data member of the next pointer in currentItem's
+    //           List_Node
+    T* nextItem(const T* currentItem);
+    
     // Checks if list is empty
     bool empty();
     
@@ -77,6 +83,6 @@ public:
 };
 
 // Necessary to separate interface from implementation with templates
-#include "List.cpp"
+#include "List.tpp"
 
 #endif /* LIST_H */

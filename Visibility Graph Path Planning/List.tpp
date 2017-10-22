@@ -1,5 +1,5 @@
 //
-//  List.cpp
+//  List.tpp
 //  A-Star Search
 //
 //  Created by Joshua Wilhelm on 10/3/17.
@@ -205,6 +205,30 @@ T* List<T>::removeValue(T* delPtr) {
     }
     
     // Function failed
+    assert(false);
+}
+
+// REQUIRES: currentItem is a pointer to a data member of a List_Node in
+//           List
+// EFFECTS : returns the data member of the next pointer in currentItem's
+//           List_Node. Returns the null pointer if currentItem is the last item
+//           in List
+template <typename T>
+T* List<T>::nextItem(const T* currentItem) {
+    List_Node<T>* searchPtr = head;
+    while (searchPtr != nullptr) {
+        if (searchPtr->data == currentItem) {
+            // Found item
+            if (searchPtr == tail) {
+                // At end of list
+                return nullptr;
+            }
+            return searchPtr->next->data;
+        }
+        searchPtr = searchPtr->next;
+    }
+    
+    // Requires clause broken (currentItem is not in List)
     assert(false);
 }
 
