@@ -69,6 +69,11 @@ public:
     // Removes the node with data == delPtr and returns its data
     T* removeValue(T* delPtr);
     
+    // EFFECTS : returns the data member of the first item in the List, returns
+    //           the null pointer if List is empty
+    // NOTE    : Can be used together with nextItem to iterate through a List
+    T* firstItem();
+    
     // REQUIRES: currentItem is a pointer to a data member of a List_Node in
     //           List
     // EFFECTS : returns the data member of the next pointer in currentItem's

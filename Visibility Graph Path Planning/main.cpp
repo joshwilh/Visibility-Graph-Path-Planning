@@ -16,12 +16,6 @@
 
 using namespace std;
 
-// REQUIRES: polygons is an empty vector of vectors of doubles, 'is' is a valid
-//           input stream that has been opened and is in the correct format
-// MODIFIES: polygons
-// EFFECTS : reads vertices from is and places them into polygons
-void read_polygons(vector<vector<double> >& polygons, istream& is);
-
 //TODO: Write main
 int main(int argc, const char * argv[]) {
     
@@ -31,7 +25,7 @@ int main(int argc, const char * argv[]) {
     cin >> polygon_filename;
     cout << endl;
     
-    // Check if polygon file opens properly and send to reading function
+    // Check if polygon file opens properly
     ifstream polygon_fin;
     polygon_fin.open(polygon_filename);
     
@@ -39,9 +33,10 @@ int main(int argc, const char * argv[]) {
         cout << "Error opening file: " << polygon_filename << endl;
         return 1;
     }
-
-    vector<vector<double> > polygons;
-    read_polygons(polygons, polygon_fin);
+    
+    // Preprocessing (see README)
+    Graph g;
+    preProcess(g, polygon_fin);
     
     polygon_fin.close();
     
@@ -65,34 +60,5 @@ int main(int argc, const char * argv[]) {
     //cout << testList.removeEnd() << endl;
     //testList.insertByValue(&x); // Should cause compiler error
      
-    
-    // Testing addVertices
-    Graph g;
-    addVertices(g, polygons);
-     
     return 0;
-}
-
-// REQUIRES: polygons is an empty vector of vectors of doubles, 'is' is a valid
-//           input stream that has been opened and is in the correct format
-// MODIFIES: polygons
-// EFFECTS : reads vertices from is and places them into polygons
-void read_polygons(vector<vector<double> >& polygons, istream& is) {
-    assert(polygons.size() == 0);
-    
-    int num_vertices;
-    
-    // Reads one polygon per loop
-    while (is >> num_vertices) {
-        
-        // Reads all vertex coordinates for this polygon
-        vector<double> vertices;
-        for (int i = 0; i < 2 * num_vertices; ++i) { // 2 coord per vertex
-            double read_vertex;
-            is >> read_vertex;
-            vertices.push_back(read_vertex);
-        }
-        
-        polygons.push_back(vertices);
-    }
 }

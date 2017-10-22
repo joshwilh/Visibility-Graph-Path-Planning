@@ -31,6 +31,48 @@ static int orientation (Vertex const p1, Vertex const p2, Vertex const p3) {
     return -1;
 }
 
+// REQUIRES: polygons is an empty vector of vectors of doubles, 'is' is a valid
+//           input stream that has been opened and is in the correct format
+// MODIFIES: polygons
+// EFFECTS : reads vertices from is and places them into polygons
+static void read_polygons(vector<vector<double> >& polygons, istream& is) {
+    assert(polygons.size() == 0);
+    
+    int num_vertices;
+    
+    // Reads one polygon per loop
+    while (is >> num_vertices) {
+        
+        // Reads all vertex coordinates for this polygon
+        vector<double> vertices;
+        for (int i = 0; i < 2 * num_vertices; ++i) { // 2 coord per vertex
+            double read_vertex;
+            is >> read_vertex;
+            vertices.push_back(read_vertex);
+        }
+        
+        polygons.push_back(vertices);
+    }
+}
+
+// REQUIRES: graph is an empty graph, polygonFile has been opened properly and
+//           contains polygons in the proper format, polygons cannot overlap,
+//           nor can they share vertices, edges, or have a vertex on the edge of
+//           another polygon
+// MODIFIES: graph, polygonFile
+// EFFECTS : reads polygonFile, then calls addVerticesAndEdges, then
+//           makeConnections (which calls visibleVertices on each vertex)
+void preProcess(Graph &graph, std::istream& polygonFile) {
+    
+    vector<vector<double> > polygons;
+    read_polygons(polygons, polygonFile);
+    
+    vector<Edge> polygonEdges;
+    addVerticesAndEdges(graph, polygons, polygonEdges);
+    
+    makeConnections(graph, polygonEdges);
+}
+
 // REQUIRES: graph is an empty Graph, polygons contains vectors of polygon
 //           coordinates in the correct format, polygonEdges is an empty vector.
 // MODIFIES: graph, polygonEdges
@@ -80,6 +122,22 @@ void addVerticesAndEdges(Graph &graph,
         // first vertex (*newVert)
         Edge newEdge = {currentVertex, *newVert};
         polygonEdges.push_back(newEdge);
+    }
+}
+
+// REQUIRES: graph and polygonEdges have been successfully passed through
+//           addVerticesAndEdges.
+//           contains vectors of polygon coordinates in the correct format.
+// MODIFIES: graph
+// EFFECTS : Checks each vertex in graph for all visible vertices, and adds all
+//           visible pairs as edges in graph
+void makeConnections(Graph &graph, std::vector<Edge> const &polygonEdges) {
+    
+    Vertex* v = graph.vertices.firstItem();
+    
+    while (v != nullptr) {
+        visibleVertices(v, graph, polygonEdges);
+        v = graph.vertices.nextItem(v);
     }
 }
 

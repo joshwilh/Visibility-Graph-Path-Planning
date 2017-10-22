@@ -208,6 +208,17 @@ T* List<T>::removeValue(T* delPtr) {
     assert(false);
 }
 
+// EFFECTS : returns the data member of the first item in the List, returns the
+//           null pointer if List is empty
+// NOTE    : Can be used together with nextItem to iterate through a List
+template <typename T>
+T* List<T>::firstItem() {
+    if (empty()) {
+        return nullptr;
+    }
+    return head->data;
+}
+
 // REQUIRES: currentItem is a pointer to a data member of a List_Node in
 //           List
 // EFFECTS : returns the data member of the next pointer in currentItem's

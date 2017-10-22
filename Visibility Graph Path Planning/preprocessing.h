@@ -10,6 +10,7 @@
 #define preprocessing_h
 
 #include <vector>
+#include <iostream>
 #include "List.h"
 
 // Forward declaration
@@ -34,13 +35,15 @@ struct Graph {
     List<Vertex> vertices;
 };
 
-//TODO - also finish RME
-// CHANGE: Should take in istream instead of vector polygons and do all reading
-//         itself
-// EFFECTS : calls addVerticesAndEdges, then makeConnections (which calls
-//           visibleVertices on each vertex)
-void preProcess(Graph &graph,
-                std::vector<std::vector<double> > const &polygons);
+//TODO
+// REQUIRES: graph is an empty graph, polygonFile has been opened properly and
+//           contains polygons in the proper format, polygons cannot overlap,
+//           nor can they share vertices, edges, or have a vertex on the edge of
+//           another polygon
+// MODIFIES: graph, polygonFile
+// EFFECTS : reads polygonFile, then calls addVerticesAndEdges, then
+//           makeConnections (which calls visibleVertices on each vertex)
+void preProcess(Graph &graph, std::istream& polygonFile);
 
 // REQUIRES: graph is an empty Graph, polygons contains vectors of polygon
 //           coordinates in the correct format, polygonEdges is an empty vector.
@@ -52,7 +55,6 @@ void addVerticesAndEdges(Graph &graph,
                          std::vector<std::vector<double> > const &polygons,
                          std::vector<Edge> &polygonEdges);
 
-//TODO
 // REQUIRES: graph and polygonEdges have been successfully passed through
 //           addVerticesAndEdges.
 //           contains vectors of polygon coordinates in the correct format.
