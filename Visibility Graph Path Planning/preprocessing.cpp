@@ -12,6 +12,15 @@
 
 using namespace std;
 
+
+//REQUIRES: a and b do not have extremely large absolute values
+//EFFECTS: returns true if a and b are within EPSILON of one another,
+//         false otherwise
+static bool compareDoubles(double a, double b) {
+    return fabs(a - b) < __DBL_EPSILON__;
+}
+
+
 // REQUIRES: all parameters are valid vertices
 // EFFECTS : returns 1 if orientation of (p1, p2, p3) is clockwise
 //           returns -1 if orientation of (p1, p2, p3) is counterclockwise
@@ -150,16 +159,26 @@ void makeConnections(Graph &graph, std::vector<Edge> const &polygonEdges) {
 //           vertices' connections lists, in both cases with distances
 void visibleVertices(Vertex *v, Graph &graph,
                      std::vector<Edge> const &polygonEdges) {
+    
+    // Bug fix: Create v and check vertices to give to List that have empty
+    //          connections lists (to avoid deleting the edges
+    Vertex v_no_connect = {v->xPos, v->yPos};
+    
     Vertex * check = graph.vertices.nextItem(v);
     
     // Loop through higher-indexed vertices above v
     while (check != nullptr) {
-        if (visible(*v, *check, polygonEdges)) {
+        
+        // Bug fix: see above
+        Vertex check_no_connect = {check->xPos, check->yPos};
+        
+        if (visible(v_no_connect, check_no_connect, polygonEdges)) {
             // check is visible from v and vice versa, build an edge
             double distance = sqrt(pow(check->xPos - v->xPos, 2) +
                                    pow(check->yPos - v->yPos, 2));
             Edge* newEdge = new Edge;
-            *newEdge = {*v, *check, distance};
+            // The copies of vertices in each edge should not have connections
+            *newEdge = {v_no_connect, check_no_connect, distance};
             
             //Place edge in both vertices' connections lists
             v->connections.insertEnd(newEdge);
@@ -178,8 +197,8 @@ void visibleVertices(Vertex *v, Graph &graph,
 //           connecting check and v does intersect any polygon edges);
 //           returns false otherwise
 bool visible(Vertex const v, Vertex const check,
-             std::vector<Edge> const polygonEdges) {
-    
+             std::vector<Edge> const & polygonEdges) {
+
     // Check all polygon edges for intersection
     for (int i = 0; i < polygonEdges.size(); ++i) {
         if (intersect(v, check, polygonEdges.at(i).v1, polygonEdges.at(i).v2)) {
@@ -199,10 +218,18 @@ bool visible(Vertex const v, Vertex const check,
 //                 Example 2 remaining the same due to special cases 1) looking
 //                 through polygon by way of two in-line vertices, or 2) looking
 //                 through vertex of polygon - just move to that corner first.
+//                 HOWEVER, Example 2 returns false in the special case that the
+//                 two line segments share a common endpoint.
 //                 Special Case Example 1 returns false because flying along
 //                 edges is allowed. Example 2 remains the same.
 bool intersect(Vertex const a1, Vertex const a2,
                Vertex const b1, Vertex const b2) {
+    // Bug fix: Return false in special case where line segments have a common
+    //          endpoint
+    if (a1 == b1 || a1 == b2 || a2 == b1 || a2 == b2) {
+        return false;
+    }
+    
     // Get 4 orientations of interest
     int o1 = orientation(a1, a2, b1);
     int o2 = orientation(a1, a2, b2);
@@ -215,4 +242,11 @@ bool intersect(Vertex const a1, Vertex const a2,
     }
     // All others
     return false;
+}
+
+// EFFECTS : Returns true if lhs and rhs have the same coordinates. DOES NOT
+//           consider the connections list
+bool operator==(const Vertex &lhs, const Vertex &rhs) {
+    return compareDoubles(lhs.xPos, rhs.xPos) &&
+           compareDoubles(lhs.yPos, rhs.yPos);
 }

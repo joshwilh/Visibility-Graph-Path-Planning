@@ -34,7 +34,7 @@ int main(int argc, const char * argv[]) {
         return 1;
     }
     
-    // Preprocessing (see README)
+    // Testing Preprocessing (see README)
     Graph g;
     preProcess(g, polygon_fin);
     

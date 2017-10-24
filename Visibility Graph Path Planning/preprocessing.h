@@ -35,7 +35,6 @@ struct Graph {
     List<Vertex> vertices;
 };
 
-//TODO
 // REQUIRES: graph is an empty graph, polygonFile has been opened properly and
 //           contains polygons in the proper format, polygons cannot overlap,
 //           nor can they share vertices, edges, or have a vertex on the edge of
@@ -80,7 +79,7 @@ void visibleVertices(Vertex *v, Graph &graph,
 //           connecting check and v does intersect any polygon edges);
 //           returns false otherwise
 bool visible(Vertex const v, Vertex const check,
-             std::vector<Edge> const polygonEdges);
+             std::vector<Edge> const & polygonEdges);
 
 // REQUIRES: all parameters are valid vertices.
 // EFFECTS : returns true if the line segment [a1, a2] intesects line segment
@@ -90,9 +89,15 @@ bool visible(Vertex const v, Vertex const check,
 //                 Example 2 remaining the same due to special cases 1) looking
 //                 through polygon by way of two in-line vertices, or 2) looking
 //                 through vertex of polygon - just move to that corner first.
+//                 HOWEVER, Example 2 returns false in the special case that the
+//                 two line segments share a common endpoint.
 //                 Special Case Example 1 returns false because flying along
 //                 edges is allowed. Example 2 remains the same.
 bool intersect(Vertex const a1, Vertex const a2,
                Vertex const b1, Vertex const b2);
+
+// EFFECTS : Returns true if lhs and rhs have the same coordinates. DOES NOT
+//           consider the connections list
+bool operator==(const Vertex &lhs, const Vertex &rhs);
 
 #endif /* preprocessing_h */
