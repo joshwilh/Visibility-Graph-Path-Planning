@@ -14,11 +14,9 @@ using namespace std;
 
 // Constructs empty list
 template <typename T>
-List<T>::List() {
-    // Set to null to avoid garbage value
-    head = nullptr;
-    tail = nullptr;
-}
+List<T>::List() :
+// Set to null to avoid garbage value
+head(nullptr), tail(nullptr), List_size(0){}
 
 // Destructor: Deletes all nodes in list
 template <typename T>
@@ -55,6 +53,8 @@ void List<T>::insertEnd(T* nodePtr) {
         tail->next = temp;
         tail = temp;
     }
+    // Increment size
+    ++List_size;
 }
 
 // Adds a node to the beginning of the list
@@ -73,12 +73,16 @@ void List<T>::insertStart(T* nodePtr) {
         temp->next = head;
         head = temp;
     }
+    // Increment size
+    ++List_size;
 }
 
 // Calls private function of same name
 template <typename T>
 void List<T>::insertByValue(T* nodePtr) {
     insertByValue(nodePtr, id<T>());
+    // Increment size
+    ++List_size;
 }
 
 // FOR TYPE T == Tree_Node:
@@ -130,6 +134,9 @@ T* List<T>::removeEnd() {
     // Check if empty list
     assert(head != nullptr);
     
+    // Decrement size
+    --List_size;
+    
     if (head->next == nullptr) {
         // Single node
         return deleteSingleNode();
@@ -156,6 +163,9 @@ T* List<T>::removeStart() {
     // Check if empty list
     assert(head != nullptr);
     
+    // Decrement size
+    --List_size;
+    
     if (head->next == nullptr) {
         // Single node
         return deleteSingleNode();
@@ -172,6 +182,9 @@ template <typename T>
 T* List<T>::removeValue(T* delPtr) {
     // Check if empty list
     assert(head != nullptr);
+    
+    // Decrement size
+    --List_size;
     
     if (head->next == nullptr) {
         // Single node
@@ -212,7 +225,7 @@ T* List<T>::removeValue(T* delPtr) {
 //           null pointer if List is empty
 // NOTE    : Can be used together with nextItem to iterate through a List
 template <typename T>
-T* List<T>::firstItem() {
+T* List<T>::firstItem() const{
     if (empty()) {
         return nullptr;
     }
@@ -222,17 +235,17 @@ T* List<T>::firstItem() {
 // REQUIRES: currentItem is a pointer to a data member of a List_Node in
 //           List
 // EFFECTS : returns the data member of the next pointer in currentItem's
-//           List_Node. Returns the null pointer if currentItem is the last item
-//           in List
+//           List_Node. If currentItem is the last item in the list, returns
+//           the first item.
 template <typename T>
-T* List<T>::nextItem(const T* currentItem) {
+T* List<T>::nextItem(const T* currentItem) const{
     List_Node<T>* searchPtr = head;
     while (searchPtr != nullptr) {
         if (searchPtr->data == currentItem) {
             // Found item
             if (searchPtr == tail) {
                 // At end of list
-                return nullptr;
+                return firstItem();
             }
             return searchPtr->next->data;
         }
@@ -243,9 +256,15 @@ T* List<T>::nextItem(const T* currentItem) {
     assert(false);
 }
 
+// Returns the size of the list
+template <typename T>
+int List<T>::size() const{
+    return List_size;
+}
+
 // Checks if list is empty
 template <typename T>
-bool List<T>::empty() {
+bool List<T>::empty() const{
     return head == nullptr;
 }
 

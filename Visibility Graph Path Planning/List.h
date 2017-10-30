@@ -33,6 +33,9 @@ private:
     // Node pointers that point to first and last nodes of list
     List_Node<T> *head, *tail;
     
+    // The size of the list
+    int List_size;
+    
     // Encapsulates code to delete the last node of the list
     T* deleteSingleNode();
     
@@ -72,16 +75,20 @@ public:
     // EFFECTS : returns the data member of the first item in the List, returns
     //           the null pointer if List is empty
     // NOTE    : Can be used together with nextItem to iterate through a List
-    T* firstItem();
+    T* firstItem() const;
     
     // REQUIRES: currentItem is a pointer to a data member of a List_Node in
     //           List
     // EFFECTS : returns the data member of the next pointer in currentItem's
-    //           List_Node
-    T* nextItem(const T* currentItem);
+    //           List_Node. If currentItem is the last item in the list, returns
+    //           the first item.
+    T* nextItem(const T* currentItem) const;
+    
+    // Returns the size of the list
+    int size() const;
     
     // Checks if list is empty
-    bool empty();
+    bool empty() const;
     
     // Prints list (currently not implemented)
     // T* display();

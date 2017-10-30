@@ -21,3 +21,8 @@ TODO
 preprocessing
 
 TODO
+
+polygon obstacle file format
+
+Obstacle files must contain polygons represented as the (x,y) coordinates of vertices, preceded by the total number of vertices in the polygon. The vertices must be in CW or CCW orientation about the polygon. For example, two squares could be represented as:
+"4\n0 0 0 1 1 1 1 0\n4\n 2 2 2 3 3 3 3 2"

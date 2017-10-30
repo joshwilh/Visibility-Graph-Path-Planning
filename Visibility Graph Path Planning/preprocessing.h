@@ -13,26 +13,29 @@
 #include <iostream>
 #include "List.h"
 
-// Forward declaration
-struct Edge;
+const int DIMENSIONS = 2;
 
-// Contains coordinates and list of edges
+// Contains coordinates
 struct Vertex {
-    double xPos;
-    double yPos;
-    List<Edge> connections;
+    double coord[DIMENSIONS];
+};
+
+// Contains a linked list of coordinates
+struct Polygon {
+    List<Vertex> polygonVertices;
 };
 
 // Contains two vertex endpoints and length of edge between them
 struct Edge {
-    Vertex v1;
-    Vertex v2;
+    const Vertex* v1;
+    const Vertex* v2;
     double length;
 };
 
-// Contains list of vertices
+// Contains list of vertices and paths between the vertices
 struct Graph {
     List<Vertex> vertices;
+    List<Edge> connections;
 };
 
 // REQUIRES: graph is an empty graph, polygonFile has been opened properly and
@@ -40,46 +43,39 @@ struct Graph {
 //           nor can they share vertices, edges, or have a vertex on the edge of
 //           another polygon
 // MODIFIES: graph, polygonFile
-// EFFECTS : reads polygonFile, then calls addVerticesAndEdges, then
-//           makeConnections (which calls visibleVertices on each vertex)
+// EFFECTS : reads polygonFile, then calls addVertices, then makeConnections
+//           (which calls visibleVertices on each vertex)
 void preProcess(Graph &graph, std::istream& polygonFile);
 
-// REQUIRES: graph is an empty Graph, polygons contains vectors of polygon
-//           coordinates in the correct format, polygonEdges is an empty vector.
-// MODIFIES: graph, polygonEdges
-// EFFECTS : all of the vertices in polygons are added to graph with empty
-//           'connections' lists, fills polygonEdges with edges to be used in
-//           the visible function
-void addVerticesAndEdges(Graph &graph,
-                         std::vector<std::vector<double> > const &polygons,
-                         std::vector<Edge> &polygonEdges);
-
-// REQUIRES: graph and polygonEdges have been successfully passed through
-//           addVerticesAndEdges.
-//           contains vectors of polygon coordinates in the correct format.
+// REQUIRES: graph is an empty Graph, polygons contains polygon objects with
+//           coordinates in the correct format
 // MODIFIES: graph
-// EFFECTS : Checks each vertex in graph for all visible vertices, and adds all
-//           visible pairs as edges in graph
-void makeConnections(Graph &graph, std::vector<Edge> const &polygonEdges);
+// EFFECTS : all of the vertices in polygons are added to graph
+void addVertices(Graph &graph, List<Polygon> const &polygons);
 
-// REQUIRES: v is a vertex in graph. graph and polygonEdges have been
-//           successfully passed through addVerticesAndEdges, v is not in the
-//           interior of a polygon
-// MODIFIES: *v, graph
-// EFFECTS : adds all visible vertices from v that are indexed higher (listed
-//           later) in graph to v's connections as edges, and adds v to those
-//           vertices' connections lists
-void visibleVertices(Vertex *v, Graph &graph,
-                     std::vector<Edge> const &polygonEdges);
+// REQUIRES: graph has been successfully passed through addVertices.
+//           polygons contains valid polygon obstacles
+// MODIFIES: graph
+// EFFECTS : Checks each vertex in graph for all visible vertices
+void makeConnections(Graph &graph, List<Polygon> const &polygons);
+
+// REQUIRES: v is a vertex in graph. graph has been successfully passed through
+//           addVertices, v is not in the interior of a polygon,
+//           0 <= index < graph.vertices.size()
+// MODIFIES: graph
+// EFFECTS : adds all possible paths from v that are indexed higher (listed
+//           later) in graph to graph as edges
+void visibleVertices(const Vertex *v, Graph &graph, const int index,
+                     List<Polygon> const &polygons);
 
 // REQUIRES: v and check are valid vertices; v != check;
 //           v and check are not in the interior of a polgon
-//           polygonEdges has been properly constructed in generateEdges
+//           polygons contains valid polygon objects
 // EFFECTS : returns true if check is visible from v (the line segment
 //           connecting check and v does intersect any polygon edges);
 //           returns false otherwise
-bool visible(Vertex const v, Vertex const check,
-             std::vector<Edge> const & polygonEdges);
+bool visible(const Vertex& v, const Vertex& check,
+             List<Polygon> const &polygons);
 
 // REQUIRES: all parameters are valid vertices.
 // EFFECTS : returns true if the line segment [a1, a2] intesects line segment
@@ -93,11 +89,10 @@ bool visible(Vertex const v, Vertex const check,
 //                 two line segments share a common endpoint.
 //                 Special Case Example 1 returns false because flying along
 //                 edges is allowed. Example 2 remains the same.
-bool intersect(Vertex const a1, Vertex const a2,
-               Vertex const b1, Vertex const b2);
+bool intersect(Vertex const& a1, Vertex const& a2,
+               Vertex const& b1, Vertex const& b2);
 
-// EFFECTS : Returns true if lhs and rhs have the same coordinates. DOES NOT
-//           consider the connections list
+// EFFECTS : Returns true if lhs and rhs have the same coordinates.
 bool operator==(const Vertex &lhs, const Vertex &rhs);
 
 #endif /* preprocessing_h */

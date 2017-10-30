@@ -13,11 +13,23 @@
 using namespace std;
 
 
-//REQUIRES: a and b do not have extremely large absolute values
-//EFFECTS: returns true if a and b are within EPSILON of one another,
+// REQUIRES: a and b do not have extremely large absolute values
+// EFFECTS: returns true if a and b are within EPSILON of one another,
 //         false otherwise
 static bool compareDoubles(double a, double b) {
     return fabs(a - b) < __DBL_EPSILON__;
+}
+
+// REQUIRES: dimensions > 0, v1.coord[] and v2.coord[] are of size dimensions
+// EFFECTS : returns the distance between v1 and v2
+static double distanceFormula(const Vertex& v1, const Vertex& v2,
+                              const int dimensions) {
+    double sumOfSquares = 0;
+    for (int i = 0; i < dimensions; ++i) {
+        sumOfSquares += pow(v1.coord[i] - v2.coord[i], 2);
+    }
+    
+    return sqrt(sumOfSquares);
 }
 
 
@@ -29,8 +41,8 @@ static bool compareDoubles(double a, double b) {
 //           Credit: http://www.geeksforgeeks.org/orientation-3-ordered-points/
 static int orientation (Vertex const p1, Vertex const p2, Vertex const p3) {
     // Orientation formula: (y2 - y1)*(x3 - x2) - (y3 - y2)*(x2 - x1)
-    int result = (p2.yPos - p1.yPos) * (p3.xPos - p2.xPos) - (p3.yPos - p2.yPos)
-    * (p2.xPos - p1.xPos);
+    int result = (p2.coord[1] - p1.coord[1]) * (p3.coord[0] - p2.coord[0])
+                 - (p3.coord[1] - p2.coord[1]) * (p2.coord[0] - p1.coord[0]);
     if (result == 0) {
         return 0;
     }
@@ -40,12 +52,12 @@ static int orientation (Vertex const p1, Vertex const p2, Vertex const p3) {
     return -1;
 }
 
-// REQUIRES: polygons is an empty vector of vectors of doubles, 'is' is a valid
+// REQUIRES: polygons is an empty List of polygons, 'is' is a valid
 //           input stream that has been opened and is in the correct format
 // MODIFIES: polygons
 // EFFECTS : reads vertices from is and places them into polygons
-static void read_polygons(vector<vector<double> >& polygons, istream& is) {
-    assert(polygons.size() == 0);
+static void read_polygons(List<Polygon> polygons, istream& is) {
+    assert(polygons.empty());
     
     int num_vertices;
     
@@ -53,14 +65,17 @@ static void read_polygons(vector<vector<double> >& polygons, istream& is) {
     while (is >> num_vertices) {
         
         // Reads all vertex coordinates for this polygon
-        vector<double> vertices;
-        for (int i = 0; i < 2 * num_vertices; ++i) { // 2 coord per vertex
-            double read_vertex;
-            is >> read_vertex;
-            vertices.push_back(read_vertex);
+        Polygon *vertices = new Polygon;
+        for (int i = 0; i < 2 * num_vertices; i += DIMENSIONS) {
+            // DIMENSIONS = num of coord per vertex
+            Vertex *v = new Vertex;
+            for (int j = 0; j < DIMENSIONS; ++j) {
+                is >> v->coord[j];
+            }
+            vertices->polygonVertices.insertEnd(v);
         }
         
-        polygons.push_back(vertices);
+        polygons.insertEnd(vertices);
     }
 }
 
@@ -69,120 +84,107 @@ static void read_polygons(vector<vector<double> >& polygons, istream& is) {
 //           nor can they share vertices, edges, or have a vertex on the edge of
 //           another polygon
 // MODIFIES: graph, polygonFile
-// EFFECTS : reads polygonFile, then calls addVerticesAndEdges, then
-//           makeConnections (which calls visibleVertices on each vertex)
+// EFFECTS : reads polygonFile, then calls addVertices, then makeConnections
+//           (which calls visibleVertices on each vertex)
 void preProcess(Graph &graph, std::istream& polygonFile) {
     
-    vector<vector<double> > polygons;
+    List<Polygon> polygons;
     read_polygons(polygons, polygonFile);
     
-    vector<Edge> polygonEdges;
-    addVerticesAndEdges(graph, polygons, polygonEdges);
+    addVertices(graph, polygons);
     
     makeConnections(graph, polygonEdges);
 }
 
-// REQUIRES: graph is an empty Graph, polygons contains vectors of polygon
-//           coordinates in the correct format, polygonEdges is an empty vector.
-// MODIFIES: graph, polygonEdges
-// EFFECTS : all of the vertices in polygons are added to graph with empty
-//           'connections' lists, fills polygonEdges with edges to be used in
-//           the visible function
-void addVerticesAndEdges(Graph &graph,
-                         std::vector<std::vector<double> > const &polygons,
-                         std::vector<Edge> &polygonEdges) {
-    // Check graph and polygonEdges are empty
-    assert(graph.vertices.empty());
-    assert(polygonEdges.empty());
+// REQUIRES: graph is an empty Graph, polygons contains polygon objects with
+//           coordinates in the correct format
+// MODIFIES: graph
+// EFFECTS : all of the vertices in polygons are added to graph
+void addVertices(Graph &graph, List<Polygon> const &polygons) {
+    // Check graph is empty
+    assert(graph.vertices.empty() && graph.connections.empty());
     
-    // Make empty list to add to graph
-    List<Vertex> vertices;
-    graph.vertices = vertices;
+    // First polygon in polygons
+    const Polygon* currentPolygon = polygons.firstItem();
+    assert(currentPolygon != nullptr);
     
     for (int polygon = 0; polygon < polygons.size(); ++polygon) {
         
-        // Can't have a polygon with fewer than 3 vertices (6 coordinates)
-        assert(polygons[polygon].size() >= 6);
+        // Can't have a polygon with fewer than 3 vertices
+        assert(currentPolygon->polygonVertices.size() >= 3);
         
-        // Add first vertex, keep in storage between loops
-        Vertex* newVert = new Vertex;
-        newVert->xPos = polygons[polygon][0];
-        newVert->yPos = polygons[polygon][1];
-        graph.vertices.insertEnd(newVert);
+        // First vertex in current polygon
+        const Vertex* currentVertex =
+                            currentPolygon->polygonVertices.firstItem();
+        assert(currentVertex != nullptr);
         
-        Vertex currentVertex = *newVert;
-        
-        for (int j = 2; j < polygons[polygon].size() - 1; j += 2) {
-            // Each vertex in this polygon after the first
+        for (int i = 0; i < currentPolygon->polygonVertices.size(); ++i) {
+            // Each vertex in this polygon
             
-            Vertex *newVert1 = new Vertex;
-            newVert1->xPos = polygons[polygon][j];
-            newVert1->yPos = polygons[polygon][j+1];
-            graph.vertices.insertEnd(newVert1);
+            Vertex* newVert = new Vertex;
+            for (int j = 0; j < DIMENSIONS; ++j) {
+                newVert->coord[j] = currentVertex->coord[j];
+            }
+            graph.vertices.insertEnd(newVert);
             
-            // Each edge except the last (from last vertex to first vertex)
-            Edge newEdge = {currentVertex, *newVert1};
-            polygonEdges.push_back(newEdge);
-            
-            currentVertex = *newVert1;
+            // Move to next vertex in current polygon
+            currentVertex = currentPolygon->
+                            polygonVertices.nextItem(currentVertex);
         }
         
-        // Create edge that goes from last vertex (currentVertex) in list to
-        // first vertex (*newVert)
-        Edge newEdge = {currentVertex, *newVert};
-        polygonEdges.push_back(newEdge);
+        // Move to next polygon in polygons
+        currentPolygon = polygons.nextItem(currentPolygon);
     }
 }
 
-// REQUIRES: graph and polygonEdges have been successfully passed through
-//           addVerticesAndEdges.
-//           contains vectors of polygon coordinates in the correct format.
+// REQUIRES: graph has been successfully passed through addVertices.
+//           polygons contains valid polygon obstacles
 // MODIFIES: graph
-// EFFECTS : Checks each vertex in graph for all visible vertices, and adds all
-//           visible pairs as edges in graph
-void makeConnections(Graph &graph, std::vector<Edge> const &polygonEdges) {
+// EFFECTS : Checks each vertex in graph for all visible vertices
+void makeConnections(Graph &graph, List<Polygon> const &polygons) {
     
-    Vertex* v = graph.vertices.firstItem();
+    // If graph is empty, no connections to be made
+    if (graph.vertices.empty()) {
+        return;
+    }
     
-    while (v != nullptr) {
-        visibleVertices(v, graph, polygonEdges);
+    const Vertex* v = graph.vertices.firstItem();
+    
+    for (int i = 0; i < graph.vertices.size(); ++i) {
+        visibleVertices(v, graph, i, polygons);
         v = graph.vertices.nextItem(v);
     }
 }
 
-// REQUIRES: v is a vertex in graph. graph and polygonEdges have been
-//           successfully passed through addVerticesAndEdges, v is not in the
-//           interior of a polygon
-// MODIFIES: *v, graph
-// EFFECTS : adds all visible vertices from v that are indexed higher (listed
-//           later) in graph to v's connections as edges, and adds v to those
-//           vertices' connections lists, in both cases with distances
-void visibleVertices(Vertex *v, Graph &graph,
-                     std::vector<Edge> const &polygonEdges) {
+// REQUIRES: v is a vertex in graph. graph has been successfully passed through
+//           addVertices, v is not in the interior of a polygon,
+//           0 <= index < graph.vertices.size()
+// MODIFIES: graph
+// EFFECTS : adds all possible paths from v that are indexed higher (listed
+//           later) in graph to graph as edges
+void visibleVertices(const Vertex *v, Graph &graph, const int index,
+                     List<Polygon> const &polygons) {
     
-    // Bug fix: Create v and check vertices to give to List that have empty
-    //          connections lists (to avoid deleting the edges
-    Vertex v_no_connect = {v->xPos, v->yPos};
+    // Check requires clause
+    assert(index >= 0 && index < graph.vertices.size());
     
-    Vertex * check = graph.vertices.nextItem(v);
+    // First vertex after v
+    const Vertex* check = graph.vertices.nextItem(v);
     
     // Loop through higher-indexed vertices above v
-    while (check != nullptr) {
+    for (int i = index; i < graph.vertices.size(); ++i) {
         
-        // Bug fix: see above
-        Vertex check_no_connect = {check->xPos, check->yPos};
-        
-        if (visible(v_no_connect, check_no_connect, polygonEdges)) {
-            // check is visible from v and vice versa, build an edge
-            double distance = sqrt(pow(check->xPos - v->xPos, 2) +
-                                   pow(check->yPos - v->yPos, 2));
-            Edge* newEdge = new Edge;
-            // The copies of vertices in each edge should not have connections
-            *newEdge = {v_no_connect, check_no_connect, distance};
+        if (visible(*v, *check, polygons)) {
             
-            //Place edge in both vertices' connections lists
-            v->connections.insertEnd(newEdge);
-            check->connections.insertEnd(newEdge);
+            // check is visible from v and vice versa, build an edge
+            double distance = distanceFormula(*v, *check, DIMENSIONS);
+            
+            // Give each new edge pointers to vertices
+            // NOTE: vertices in edge are owned by graph's vertices list
+            Edge* newEdge = new Edge{v, check, distance};
+            
+            //Place edge in graph's list
+            graph.connections.insertEnd(newEdge);
         }
         
         // Increment check to next vertex
@@ -192,18 +194,38 @@ void visibleVertices(Vertex *v, Graph &graph,
 
 // REQUIRES: v and check are valid vertices; v != check;
 //           v and check are not in the interior of a polgon
-//           polygonEdges has been properly constructed in generateEdges
+//           polygons contains valid polygon objects
 // EFFECTS : returns true if check is visible from v (the line segment
 //           connecting check and v does intersect any polygon edges);
 //           returns false otherwise
-bool visible(Vertex const v, Vertex const check,
-             std::vector<Edge> const & polygonEdges) {
+bool visible(const Vertex& v, const Vertex& check,
+             List<Polygon> const &polygons) {
 
-    // Check all polygon edges for intersection
-    for (int i = 0; i < polygonEdges.size(); ++i) {
-        if (intersect(v, check, polygonEdges.at(i).v1, polygonEdges.at(i).v2)) {
-            return false;
+    // First polygon
+    const Polygon* pgon = polygons.firstItem();
+    
+    // Check all polygons
+    for (int i = 0; i < polygons.size(); ++i) {
+        
+        // First vertex in pgon
+        const Vertex* v1 = pgon->polygonVertices.firstItem();
+        
+        for (int j = 0; j < pgon->polygonVertices.size(); ++j) {
+            
+            // Get vertex that comes after v1. If v1 is last item in list, v2
+            // will be first vertex. Thus [v1, v2] represent all edges
+            const Vertex* v2 = pgon->polygonVertices.nextItem(v1);
+            
+            if (intersect(v, check, *v1, *v2)) {
+                return false;
+            }
+            
+            // Increment to next vertex
+            v1 = v2;
         }
+        
+        // Increment to next polygon
+        pgon = polygons.nextItem(pgon);
     }
     
     // No intersections found
@@ -222,8 +244,8 @@ bool visible(Vertex const v, Vertex const check,
 //                 two line segments share a common endpoint.
 //                 Special Case Example 1 returns false because flying along
 //                 edges is allowed. Example 2 remains the same.
-bool intersect(Vertex const a1, Vertex const a2,
-               Vertex const b1, Vertex const b2) {
+bool intersect(Vertex const& a1, Vertex const& a2,
+               Vertex const& b1, Vertex const& b2) {
     // Bug fix: Return false in special case where line segments have a common
     //          endpoint
     if (a1 == b1 || a1 == b2 || a2 == b1 || a2 == b2) {
@@ -244,9 +266,13 @@ bool intersect(Vertex const a1, Vertex const a2,
     return false;
 }
 
-// EFFECTS : Returns true if lhs and rhs have the same coordinates. DOES NOT
-//           consider the connections list
+// EFFECTS : Returns true if lhs and rhs have the same coordinates.
 bool operator==(const Vertex &lhs, const Vertex &rhs) {
-    return compareDoubles(lhs.xPos, rhs.xPos) &&
-           compareDoubles(lhs.yPos, rhs.yPos);
+    for (int i = 0; i < DIMENSIONS; ++i) {
+        if (!compareDoubles(lhs.coord[i], rhs.coord[i])) {
+            return false;
+        }
+    }
+    // All coordinates were equal
+    return true;
 }
