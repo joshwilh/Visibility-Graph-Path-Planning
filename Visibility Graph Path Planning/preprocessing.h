@@ -18,12 +18,22 @@ const int DIMENSIONS = 2;
 // Contains coordinates
 struct Vertex {
     double coord[DIMENSIONS];
+    // Which polygon the Vertex is a member of (-1 if not part of a polygon)
+    int polygon;
+    // Which index within that polygon Vertex is (-1 if not part of a polygon)
+    int location;
+    // How many vertices the polygon that Vertex is part of contains (-1 if not
+    // part of a polygon)
+    int poly_size;
+    
+    // Vertex assignment operator
+    Vertex& operator=(const Vertex& rhs);
 };
 
 // Contains a linked list of coordinates
-struct Polygon {
-    List<Vertex> polygonVertices;
-};
+//struct Polygon {
+//    List<Vertex> polygonVertices;
+//};
 
 // Contains two vertex endpoints and length of edge between them
 struct Edge {
@@ -36,6 +46,9 @@ struct Edge {
 struct Graph {
     List<Vertex> vertices;
     List<Edge> connections;
+    
+    // Constructs an empty graph that owns its vertices and edges
+    Graph();
 };
 
 // REQUIRES: graph is an empty graph, polygonFile has been opened properly and
@@ -51,13 +64,13 @@ void preProcess(Graph &graph, std::istream& polygonFile);
 //           coordinates in the correct format
 // MODIFIES: graph
 // EFFECTS : all of the vertices in polygons are added to graph
-void addVertices(Graph &graph, List<Polygon> const &polygons);
+void addVertices(Graph &graph, List<List<Vertex>> const &polygons);
 
 // REQUIRES: graph has been successfully passed through addVertices.
 //           polygons contains valid polygon obstacles
 // MODIFIES: graph
 // EFFECTS : Checks each vertex in graph for all visible vertices
-void makeConnections(Graph &graph, List<Polygon> const &polygons);
+void makeConnections(Graph &graph, List<List<Vertex>> const &polygons);
 
 // REQUIRES: v is a vertex in graph. graph has been successfully passed through
 //           addVertices, v is not in the interior of a polygon,
@@ -66,7 +79,7 @@ void makeConnections(Graph &graph, List<Polygon> const &polygons);
 // EFFECTS : adds all possible paths from v that are indexed higher (listed
 //           later) in graph to graph as edges
 void visibleVertices(const Vertex *v, Graph &graph, const int index,
-                     List<Polygon> const &polygons);
+                     List<List<Vertex>> const &polygons);
 
 // REQUIRES: v and check are valid vertices; v != check;
 //           v and check are not in the interior of a polgon
@@ -75,7 +88,7 @@ void visibleVertices(const Vertex *v, Graph &graph, const int index,
 //           connecting check and v does intersect any polygon edges);
 //           returns false otherwise
 bool visible(const Vertex& v, const Vertex& check,
-             List<Polygon> const &polygons);
+             List<List<Vertex>> const &polygons);
 
 // REQUIRES: all parameters are valid vertices.
 // EFFECTS : returns true if the line segment [a1, a2] intesects line segment
@@ -94,5 +107,20 @@ bool intersect(Vertex const& a1, Vertex const& a2,
 
 // EFFECTS : Returns true if lhs and rhs have the same coordinates.
 bool operator==(const Vertex &lhs, const Vertex &rhs);
+
+// REQUIRES: v is a valid Vertex
+// MODIFIES: os
+// EFFECTS : Prints the Vertex to os
+std::ostream & operator<<(std::ostream &os, const Vertex &v);
+
+// REQUIRES: e is a valid Edge
+// MODIFIES: os
+// EFFECTS : Prints the Edge to os (Vertices only)
+std::ostream & operator<<(std::ostream &os, const Edge &e);
+
+// REQUIRES: g is a valid Graph
+// MODIFIES: os
+// EFFECTS : Prints the vertices and connections lists to os
+std::ostream & operator<<(std::ostream &os, const Graph &g);
 
 #endif /* preprocessing_h */

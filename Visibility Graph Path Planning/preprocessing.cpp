@@ -12,6 +12,9 @@
 
 using namespace std;
 
+// Constructs an empty graph that owns its vertices and edges
+Graph::Graph() :
+vertices(true), connections(true) {}
 
 // REQUIRES: a and b do not have extremely large absolute values
 // EFFECTS: returns true if a and b are within EPSILON of one another,
@@ -56,27 +59,45 @@ static int orientation (Vertex const p1, Vertex const p2, Vertex const p3) {
 //           input stream that has been opened and is in the correct format
 // MODIFIES: polygons
 // EFFECTS : reads vertices from is and places them into polygons
-static void read_polygons(List<Polygon> polygons, istream& is) {
+static void read_polygons(List<List<Vertex>>& polygons, istream& is) {
     assert(polygons.empty());
     
+    int polygon_index = 0;
     int num_vertices;
     
     // Reads one polygon per loop
     while (is >> num_vertices) {
         
         // Reads all vertex coordinates for this polygon
-        Polygon *vertices = new Polygon;
-        for (int i = 0; i < 2 * num_vertices; i += DIMENSIONS) {
+        List<Vertex> *polygon = new List<Vertex>(true);
+        for (int i = 0; i < DIMENSIONS * num_vertices; i += DIMENSIONS) {
             // DIMENSIONS = num of coord per vertex
             Vertex *v = new Vertex;
             for (int j = 0; j < DIMENSIONS; ++j) {
                 is >> v->coord[j];
             }
-            vertices->polygonVertices.insertEnd(v);
+            v->polygon = polygon_index;
+            v->location = i / DIMENSIONS;
+            v->poly_size = num_vertices;
+            polygon->insertEnd(v);
         }
         
-        polygons.insertEnd(vertices);
+        polygons.insertEnd(polygon);
+        
+        ++polygon_index;
     }
+}
+
+// Vertex assignment operator
+Vertex& Vertex::operator=(const Vertex& rhs) {
+    for (int i = 0; i < DIMENSIONS; ++i) {
+        coord[i] = rhs.coord[i];
+    }
+    polygon = rhs.polygon;
+    location = rhs.location;
+    poly_size = rhs.poly_size;
+    
+    return *this;
 }
 
 // REQUIRES: graph is an empty graph, polygonFile has been opened properly and
@@ -88,48 +109,45 @@ static void read_polygons(List<Polygon> polygons, istream& is) {
 //           (which calls visibleVertices on each vertex)
 void preProcess(Graph &graph, std::istream& polygonFile) {
     
-    List<Polygon> polygons;
+    // polygons will own the dynamically allocated polygons
+    List<List<Vertex>> polygons(true);
     read_polygons(polygons, polygonFile);
     
     addVertices(graph, polygons);
     
-    makeConnections(graph, polygonEdges);
+    makeConnections(graph, polygons);
 }
 
 // REQUIRES: graph is an empty Graph, polygons contains polygon objects with
 //           coordinates in the correct format
 // MODIFIES: graph
 // EFFECTS : all of the vertices in polygons are added to graph
-void addVertices(Graph &graph, List<Polygon> const &polygons) {
+void addVertices(Graph &graph, List<List<Vertex>> const &polygons) {
     // Check graph is empty
     assert(graph.vertices.empty() && graph.connections.empty());
     
     // First polygon in polygons
-    const Polygon* currentPolygon = polygons.firstItem();
+    const List<Vertex>* currentPolygon = polygons.firstItem();
     assert(currentPolygon != nullptr);
     
     for (int polygon = 0; polygon < polygons.size(); ++polygon) {
         
         // Can't have a polygon with fewer than 3 vertices
-        assert(currentPolygon->polygonVertices.size() >= 3);
+        assert(currentPolygon->size() >= 3);
         
         // First vertex in current polygon
-        const Vertex* currentVertex =
-                            currentPolygon->polygonVertices.firstItem();
+        const Vertex* currentVertex = currentPolygon->firstItem();
         assert(currentVertex != nullptr);
         
-        for (int i = 0; i < currentPolygon->polygonVertices.size(); ++i) {
+        for (int i = 0; i < currentPolygon->size(); ++i) {
             // Each vertex in this polygon
             
             Vertex* newVert = new Vertex;
-            for (int j = 0; j < DIMENSIONS; ++j) {
-                newVert->coord[j] = currentVertex->coord[j];
-            }
+            *newVert = *currentVertex;
             graph.vertices.insertEnd(newVert);
             
             // Move to next vertex in current polygon
-            currentVertex = currentPolygon->
-                            polygonVertices.nextItem(currentVertex);
+            currentVertex = currentPolygon->nextItem(currentVertex);
         }
         
         // Move to next polygon in polygons
@@ -141,7 +159,7 @@ void addVertices(Graph &graph, List<Polygon> const &polygons) {
 //           polygons contains valid polygon obstacles
 // MODIFIES: graph
 // EFFECTS : Checks each vertex in graph for all visible vertices
-void makeConnections(Graph &graph, List<Polygon> const &polygons) {
+void makeConnections(Graph &graph, List<List<Vertex>> const &polygons) {
     
     // If graph is empty, no connections to be made
     if (graph.vertices.empty()) {
@@ -163,7 +181,7 @@ void makeConnections(Graph &graph, List<Polygon> const &polygons) {
 // EFFECTS : adds all possible paths from v that are indexed higher (listed
 //           later) in graph to graph as edges
 void visibleVertices(const Vertex *v, Graph &graph, const int index,
-                     List<Polygon> const &polygons) {
+                     List<List<Vertex>> const &polygons) {
     
     // Check requires clause
     assert(index >= 0 && index < graph.vertices.size());
@@ -172,7 +190,7 @@ void visibleVertices(const Vertex *v, Graph &graph, const int index,
     const Vertex* check = graph.vertices.nextItem(v);
     
     // Loop through higher-indexed vertices above v
-    for (int i = index; i < graph.vertices.size(); ++i) {
+    for (int i = index + 1; i < graph.vertices.size(); ++i) {
         
         if (visible(*v, *check, polygons)) {
             
@@ -199,22 +217,84 @@ void visibleVertices(const Vertex *v, Graph &graph, const int index,
 //           connecting check and v does intersect any polygon edges);
 //           returns false otherwise
 bool visible(const Vertex& v, const Vertex& check,
-             List<Polygon> const &polygons) {
+             List<List<Vertex>> const &polygons) {
 
+    // Bug Fix (Oct 29, 2017): Each vertex now carries a polygon index. If these
+    // are equal, the vertices are part of the same polygon. Then, check if they
+    // are adjacent. If so, they are visibile from each other. If not, they are
+    // not visible from each other. This limits the program to CONVEX polygons.
+//    if (v.polygon == check.polygon) {
+//        Polygon* samePgon = polygons.at(v.polygon);
+//
+//        // Find the corresponding vertices to v and check in samePgon
+//        bool vFound = false;
+//        bool checkFound = false;
+//        const Vertex* vPtr = nullptr;
+//        const Vertex* checkPtr = nullptr;
+//
+//        // First vertex in samePgon
+//        const Vertex* v1 = samePgon->polygonVertices.firstItem();
+//        if (*v1 == v) {
+//            vFound = true;
+//            vPtr = v1;
+//        }
+//        if (*v1 == check) {
+//            checkFound = true;
+//            checkPtr = v1;
+//        }
+//
+//        for (int i = 0; (i < samePgon->polygonVertices.size()) && !vFound
+//                         && !checkFound; ++i) {
+//
+//            if (*v1 == v) {
+//                vFound = true;
+//                vPtr = v1;
+//            }
+//            if (*v1 == check) {
+//                checkFound = true;
+//                checkPtr = v1;
+//            }
+//
+//            // Increment to next vertex in samePgon
+//            v1 = samePgon->polygonVertices.nextItem(v1);
+//        }
+//
+//        // v and check should have been found
+//        assert(vFound && checkFound);
+//
+//        // Adjacent check
+//        return (samePgon->polygonVertices.nextItem(vPtr) == checkPtr ||
+//                samePgon->polygonVertices.nextItem(checkPtr) == vPtr);
+//    }
+    // End Bug Fix Oct 29, 2017
+    
+    // Simpler Bug Fix Oct 30, 2017
+    
+    // Check if from same polygon
+    if (v.polygon == check.polygon) {
+        
+        // Check if adjacent
+        return (abs(v.location - check.location) == 1 ||
+            (v.location == 0 && check.location == check.poly_size - 1) ||
+            (check.location == 0 && v.location == v.poly_size - 1));
+    }
+    
+    // End Bug Fix Oct 30, 2017
+    
     // First polygon
-    const Polygon* pgon = polygons.firstItem();
+    const List<Vertex>* pgon = polygons.firstItem();
     
     // Check all polygons
     for (int i = 0; i < polygons.size(); ++i) {
         
         // First vertex in pgon
-        const Vertex* v1 = pgon->polygonVertices.firstItem();
+        const Vertex* v1 = pgon->firstItem();
         
-        for (int j = 0; j < pgon->polygonVertices.size(); ++j) {
+        for (int j = 0; j < pgon->size(); ++j) {
             
             // Get vertex that comes after v1. If v1 is last item in list, v2
             // will be first vertex. Thus [v1, v2] represent all edges
-            const Vertex* v2 = pgon->polygonVertices.nextItem(v1);
+            const Vertex* v2 = pgon->nextItem(v1);
             
             if (intersect(v, check, *v1, *v2)) {
                 return false;
@@ -275,4 +355,35 @@ bool operator==(const Vertex &lhs, const Vertex &rhs) {
     }
     // All coordinates were equal
     return true;
+}
+
+// REQUIRES: v is a valid Vertex
+// MODIFIES: os
+// EFFECTS : Prints the Vertex to os (coordinates only)
+std::ostream & operator<<(std::ostream &os, const Vertex &v) {
+    os << "(";
+    for (int i = 0; i < DIMENSIONS - 1; ++i) {
+        os << v.coord[i] << ", ";
+    }
+    os << v.coord[DIMENSIONS - 1] << ")";
+    return os;
+}
+
+// REQUIRES: e is a valid Edge
+// MODIFIES: os
+// EFFECTS : Prints the Edge to os (Vertices only)
+std::ostream & operator<<(std::ostream &os, const Edge &e) {
+    os << "V1: " << *(e.v1) << " V2: " << *(e.v2);
+    
+    return os;
+}
+
+// REQUIRES: g is a valid Graph
+// MODIFIES: os
+// EFFECTS : Prints the vertices and connections lists to os
+std::ostream & operator<<(std::ostream &os, const Graph &g) {
+    os << "Vertices:" << endl << g.vertices << endl;
+    os << "Connections:" << endl << g.connections << endl;
+    
+    return os;
 }

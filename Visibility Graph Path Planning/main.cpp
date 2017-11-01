@@ -40,6 +40,8 @@ int main(int argc, const char * argv[]) {
     
     polygon_fin.close();
     
+    cout << g << endl;
+    
     // Testing List
 //    List<int> testList;
 //    int* x = new int(6);

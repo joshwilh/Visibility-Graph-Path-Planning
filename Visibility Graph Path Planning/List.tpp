@@ -12,13 +12,19 @@
 #include "List.h"
 using namespace std;
 
-// Constructs empty list
+// Constructs empty list that DOES NOT own the data
 template <typename T>
 List<T>::List() :
-// Set to null to avoid garbage value
-head(nullptr), tail(nullptr), List_size(0){}
+List(false) {}
 
-// Destructor: Deletes all nodes in list
+// Constructs empty list, allows specification of ownership flag
+template <typename T>
+List<T>::List(bool owner_flag) :
+// Set head and tail to null to avoid garbage value
+owner_of_data(owner_flag), head(nullptr), tail(nullptr), List_size(0){}
+
+// Destructor: Deletes all nodes in list. Also deletes data if owner_of_data
+//             is true
 template <typename T>
 List<T>::~List() {
     if(!empty()) {
@@ -26,10 +32,18 @@ List<T>::~List() {
         List_Node<T>* current = head;
         List_Node<T>* after = head->next;
         
+        if (owner_of_data) {
+            delete current->data;
+        }
+        
         delete current;
         while (after != nullptr) {
             current = after;
             after = after->next;
+            
+            if (owner_of_data) {
+                delete current->data;
+            }
             delete current;        
         }
     }
@@ -268,6 +282,22 @@ bool List<T>::empty() const{
     return head == nullptr;
 }
 
+// REQUIRES: 0 <= index < size
+// EFFECTS : returns the data of the List_Node at position index in the List
+template <typename T>
+T* List<T>::at(int index) const {
+    // Check requires clause
+    assert(index >= 0 && index < List_size);
+    
+    List_Node<T>* ptr = head;
+    
+    for (int i = 0; i < index; ++i) {
+        ptr = ptr->next;
+    }
+    
+    return ptr->data;
+}
+
 // Encapsulates code to delete the last node of the list
 template <typename T>
 T* List<T>::deleteSingleNode() {
@@ -279,20 +309,25 @@ T* List<T>::deleteSingleNode() {
     return returnData;
 }
 
-// Prints linked list's data values to the screen
-//void List::display() {
-//    
-//    // Create temporary node pointer to move through list
-//    node *temp = head;
-//    if (temp == nullptr) {
-//        cout << "Empty List" << endl;
-//    }
-//    else {
-//        cout << "Printing Linked List" << endl;
-//        cout << temp->data << endl;
-//        while (temp->next != nullptr) {
-//            temp = temp->next;
-//            cout << temp->data << endl;
-//        }
-//    }
-//}
+// REQUIRES: type T has an overloaded operator<<
+// MODIFIES: os
+// EFFECTS : Prints the list to os
+template <typename T>
+std::ostream & operator<<(std::ostream &os, const List<T> &L) {
+    
+    if (L.empty()) {
+        os << "Empty List" << endl;
+    }
+    else {
+        cout << "Printing Linked List" << endl;
+        
+        const T* item = L.firstItem();
+        
+        for (int i = 0; i < L.size(); ++i) {
+            os << "Item " << i << ": " << *item << endl;
+            item = L.nextItem(item);
+        }
+    }
+    
+    return os;
+}

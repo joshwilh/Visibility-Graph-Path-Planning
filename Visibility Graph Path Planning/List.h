@@ -30,6 +30,9 @@ template <typename T>
 // T is type of data to be stored in each List_Node
 class List {
 private:
+    // Determines whether the List will delete all data in destructor
+    bool owner_of_data;
+    
     // Node pointers that point to first and last nodes of list
     List_Node<T> *head, *tail;
     
@@ -46,10 +49,14 @@ private:
     void insertByValue(T* nodePtr, id<Tree_Node>);
     
 public:
-    // Constructs empty list
+    // Constructs empty list that DOES NOT own the data
     List();
     
-    // Destructor: Deletes all nodes in list
+    // Constructs empty list, allows specification of ownership flag
+    List(bool owner_flag);
+    
+    // Destructor: Deletes all nodes in list. Also deletes data if owner_of_data
+    //             is true
     ~List();
     
     // Adds a node to the end of the list
@@ -90,9 +97,16 @@ public:
     // Checks if list is empty
     bool empty() const;
     
-    // Prints list (currently not implemented)
-    // T* display();
+    // REQUIRES: 0 <= index < size
+    // EFFECTS : returns the data of the List_Node at position index in the List
+    T* at(int index) const;
 };
+
+// REQUIRES: type T has an overloaded operator<<
+// MODIFIES: os
+// EFFECTS : Prints the list to os
+template <typename T>
+std::ostream & operator<<(std::ostream &os, const List<T> &L);
 
 // Necessary to separate interface from implementation with templates
 #include "List.tpp"
