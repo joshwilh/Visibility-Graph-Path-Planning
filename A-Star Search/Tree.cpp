@@ -13,11 +13,8 @@
 using namespace std;
 
 // Default constructor
-Tree::Tree(Tree_Node rootNode) {
-    Tree_Node* temp = new Tree_Node;
-    *temp = rootNode;
-    root = temp;
-}
+Tree::Tree(Tree_Node *rootNode)
+: root(rootNode) {}
 
 // Destructor
 Tree::~Tree() {
@@ -34,19 +31,9 @@ void Tree::deleteDown(Tree_Node* nodeToDelete) {
     nodeToDelete = nullptr;
 }
 
-// Returns address of root node of tree
-Tree_Node* Tree::getRootAddress() {
-    return root;
-}
-
 // Adds new node to tree as child of parent node
-Tree_Node* Tree::addNode(Tree_Node newNode) {
-    Tree_Node* temp = new Tree_Node;
-    *temp = newNode;
-    
-    newNode.parent->childList.insertEnd(temp);
-    
-    return temp;
+void addNode(Tree_Node *newNode) {
+    newNode->parent->childList.insertEnd(newNode);
 }
 
 // REQUIRES: nodePtr points to a valid node that is NOT the root node

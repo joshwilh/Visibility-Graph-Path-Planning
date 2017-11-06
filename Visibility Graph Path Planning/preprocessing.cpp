@@ -25,7 +25,7 @@ static bool compareDoubles(double a, double b) {
 
 // REQUIRES: dimensions > 0, v1.coord[] and v2.coord[] are of size dimensions
 // EFFECTS : returns the distance between v1 and v2
-static double distanceFormula(const Vertex& v1, const Vertex& v2,
+double distanceFormula(const Vertex& v1, const Vertex& v2,
                               const int dimensions) {
     double sumOfSquares = 0;
     for (int i = 0; i < dimensions; ++i) {

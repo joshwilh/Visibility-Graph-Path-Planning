@@ -16,16 +16,16 @@
 // Node data structure
 struct Tree_Node {
     
-    // Current Location - first letter of city (must be UPPER_CASE)
-    char state;
+    // Current state (NOTE: State struct defined in Problem.h)
+    State state;
     
     // Node that generated this node
     Tree_Node *parent;
     
-    // List of children of this node
-    List childList;
+    // List of children of this node (non-owner)
+    List<Tree_Node> childList;
     
-    /* Not relevant to this problem
+    /* Not currently used
     // Operator that allowed move to this node
     int prevOperator;
      */
@@ -34,12 +34,13 @@ struct Tree_Node {
     int depth;
     
     // Cost of path from initial state to this node
-    // For this problem: Road distance traveled in km
-    int pathCost;
+    double pathCost;
     
-    // Sum of pathCost and Straight-Line-Distance to Bucharest heuristic
-    int fCost;
+    // Sum of pathCost and heuristic
+    double fCost;
 };
 
+// EFFECTS : Returns true if lhs has lower fCost than rhs.
+bool operator<(const Tree_Node &lhs, const Tree_Node &rhs);
 
 #endif /* Tree_Node_h */

@@ -3,7 +3,7 @@ README for Visibility Graph Path Planning
 List
 
 This is a singly-linked list code that can hold any type of data. Note that it uses templates, so List must be used like List<T>, where T is the type of data to store in list.
-List is specialized to allow an insert-by-fCost for the Tree_Node type. This is done using the ‘id’ struct, as well as the private insertByValue function that is called from the public one. A compile-time error will occur if this function is called on a List that does not contain Tree_Node data. In the future, the insertByValue function will likely utilize the operator< to replace this behavior.
+List's insertByValue requires that the type T has an operator overload for <.
 Note: DO NOT INCLUDE "List.cpp" in the target membership, as it is #included at the end of "List.h"
 
 main
@@ -16,7 +16,11 @@ A search tree container that holds Tree_Nodes. See the Tree_Node struct for the 
 
 search_functions
 
-TODO
+These are the domain-independent parts of the A-star search. These functions assume that a Problem class and a State struct will be provided with the appropriate functions and operator overloads. Calling AStarSearch on a Problem object will return the solution path and the total distance traveled according to an A* search algorithm.
+
+AStarProblem
+
+These are the domain-dependent parts of the A-star search. For A* to work properly, all functions in the interface "AStarProblem.h" must be implemented. Note that while the function names, return types, and parameter lists should not change in general, the member variables of Problem (and therefore also the constructor) may need to change for a given problem.
 
 preprocessing
 

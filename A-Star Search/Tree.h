@@ -23,16 +23,13 @@ private:
     
 public:
     // Constructor
-    Tree(Tree_Node rootNode);
+    Tree(Tree_Node *rootNode);
     
     // Destructor
     ~Tree();
     
-    // Returns address of root node of tree
-    Tree_Node* getRootAddress();
-    
     // Adds new node to tree as child of parent node
-    Tree_Node* addNode(Tree_Node newNode);
+    void addNode(Tree_Node *newNode);
     
     // REQUIRES: nodePtr points to a valid node that is NOT the root node
     // Removes specified node from tree. Also deletes all parent nodes if their

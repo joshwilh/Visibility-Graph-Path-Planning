@@ -91,33 +91,28 @@ void List<T>::insertStart(T* nodePtr) {
     ++List_size;
 }
 
-// Calls private function of same name
+//// Calls private function of same name
+//template <typename T>
+//void List<T>::insertByValue(T* nodePtr) {
+//    insertByValue(nodePtr, id<T>());
+//    // Increment size
+//    ++List_size;
+//}
+
+// REQUIRES: Type T has an operator overload for <
+// EFFECTS : Adds a node to the list based on its type's overload <
+//           Node is inserted such that all nodes are sorted smallest to
+//           largest from head to tail
 template <typename T>
 void List<T>::insertByValue(T* nodePtr) {
-    insertByValue(nodePtr, id<T>());
-    // Increment size
-    ++List_size;
-}
-
-// FOR TYPE T == Tree_Node:
-//      Adds a node to the list based on its f-cost
-//      Node is inserted such that all nodes are sorted by f-cost
-//      smallest to largest from head to tail
-template <typename T>
-void List<T>::insertByValue(T* nodePtr, id<Tree_Node>) {
     // If list empty, insert using insertStart
     if (empty()) {
         insertStart(nodePtr);
         return;
     }
     
-    List_Node<T> *temp = new List_Node<T>;
-    temp->data = nodePtr;
-    
-    int newFCost = nodePtr->fCost;
-    
     // Check if new node needs to be inserted at start
-    if (newFCost < head->data->fCost) {
+    if (*nodePtr < *head->data) {
         insertStart(nodePtr);
         return;
     }
@@ -126,10 +121,13 @@ void List<T>::insertByValue(T* nodePtr, id<Tree_Node>) {
     List_Node<T> *current = head;
     List_Node<T> *after = head->next;
     while (after != nullptr) {
-        if (newFCost < after->data->fCost) {
+        if (*nodePtr < *after->data) {
             // Found node to insert before (after)
+            List_Node<T> *temp = new List_Node<T>;
+            temp->data = nodePtr;
             temp->next = after;
             current->next = temp;
+            ++List_size;
             return;
         }
         current = current->next;

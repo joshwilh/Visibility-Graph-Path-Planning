@@ -42,11 +42,11 @@ private:
     // Encapsulates code to delete the last node of the list
     T* deleteSingleNode();
     
-    // FOR TYPE T == Tree_Node:
-    //      Adds a node to the list based on its f-cost
-    //      Node is inserted such that all nodes are sorted by f-cost
-    //      smallest to largest from head to tail
-    void insertByValue(T* nodePtr, id<Tree_Node>);
+//    // FOR TYPE T == Tree_Node:
+//    //      Adds a node to the list based on its f-cost
+//    //      Node is inserted such that all nodes are sorted by f-cost
+//    //      smallest to largest from head to tail
+//    void insertByValue(T* nodePtr, id<Tree_Node>);
     
 public:
     // Constructs empty list that DOES NOT own the data
@@ -65,8 +65,10 @@ public:
     // Adds a node to the beginning of the list
     void insertStart(T* nodePtr);
     
-    // TODO: Improve with <, > operator overload
-    // Calls private function of same name
+    // REQUIRES: Type T has an operator overload for <
+    // EFFECTS : Adds a node to the list based on its type's overload <
+    //           Node is inserted such that all nodes are sorted smallest to
+    //           largest from head to tail
     void insertByValue(T* nodePtr);
     
     // Removes the node at the end of the list and returns its data

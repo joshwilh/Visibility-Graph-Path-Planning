@@ -51,6 +51,11 @@ struct Graph {
     Graph();
 };
 
+// REQUIRES: dimensions > 0, v1.coord[] and v2.coord[] are of size dimensions
+// EFFECTS : returns the distance between v1 and v2
+double distanceFormula(const Vertex& v1, const Vertex& v2,
+                       const int dimensions);
+
 // REQUIRES: graph is an empty graph, polygonFile has been opened properly and
 //           contains polygons in the proper format, polygons cannot overlap,
 //           nor can they share vertices, edges, or have a vertex on the edge of
