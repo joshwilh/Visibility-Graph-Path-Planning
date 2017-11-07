@@ -10,11 +10,6 @@
 
 using namespace std;
 
-// EFFECTS : Returns true if lhs and rhs are the same state
-bool operator==(const State &lhs, const State &rhs) {
-    return (*(lhs.position) == *(rhs.position));
-}
-
 // REQUIRES: graphIn has been pre-processed and is ready for searching
 //           startStateIn, goalStateIn are valid states in graphIn
 // EFFECTS : Sets the graph, startState, and goalState

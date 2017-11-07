@@ -17,14 +17,6 @@
 #include "preprocessing.h"
 #include "Tree_Node.h"
 
-// Shallow copies ok (just a pointer, owned elsewhere anyway)
-struct State {
-    const Vertex *position;
-};
-
-// EFFECTS : Returns true if lhs and rhs are the same state
-bool operator==(const State &lhs, const State &rhs);
-
 class Problem {
 private:
     const Graph &graph;

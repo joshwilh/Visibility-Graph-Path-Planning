@@ -32,7 +32,7 @@ void Tree::deleteDown(Tree_Node* nodeToDelete) {
 }
 
 // Adds new node to tree as child of parent node
-void addNode(Tree_Node *newNode) {
+void Tree::addNode(Tree_Node *newNode) {
     newNode->parent->childList.insertEnd(newNode);
 }
 

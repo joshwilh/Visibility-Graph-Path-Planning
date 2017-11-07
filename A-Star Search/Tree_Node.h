@@ -12,6 +12,7 @@
 #include <vector>
 #include <string>
 #include "List.h"
+#include "AStarState.h"
 
 // Node data structure
 struct Tree_Node {

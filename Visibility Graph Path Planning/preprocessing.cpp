@@ -104,13 +104,15 @@ Vertex& Vertex::operator=(const Vertex& rhs) {
 //           contains polygons in the proper format, polygons cannot overlap,
 //           nor can they share vertices, edges, or have a vertex on the edge of
 //           another polygon
-// MODIFIES: graph, polygonFile
+//           polygons is empty
+// MODIFIES: graph, polygonFile, polygons
 // EFFECTS : reads polygonFile, then calls addVertices, then makeConnections
-//           (which calls visibleVertices on each vertex)
-void preProcess(Graph &graph, std::istream& polygonFile) {
+//           (which calls visibleVertices on each vertex). polygons can later be
+//           used to call specific functions in preprocessing
+void preProcess(Graph &graph, std::istream& polygonFile,
+                List<List<Vertex>> &polygons) {
     
     // polygons will own the dynamically allocated polygons
-    List<List<Vertex>> polygons(true);
     read_polygons(polygons, polygonFile);
     
     addVertices(graph, polygons);
@@ -271,7 +273,7 @@ bool visible(const Vertex& v, const Vertex& check,
     // Simpler Bug Fix Oct 30, 2017
     
     // Check if from same polygon
-    if (v.polygon == check.polygon) {
+    if (v.polygon == check.polygon && v.polygon != -1) {
         
         // Check if adjacent
         return (abs(v.location - check.location) == 1 ||

@@ -18,9 +18,9 @@ search_functions
 
 These are the domain-independent parts of the A-star search. These functions assume that a Problem class and a State struct will be provided with the appropriate functions and operator overloads. Calling AStarSearch on a Problem object will return the solution path and the total distance traveled according to an A* search algorithm.
 
-AStarProblem
+AStarProblem and AStarState
 
-These are the domain-dependent parts of the A-star search. For A* to work properly, all functions in the interface "AStarProblem.h" must be implemented. Note that while the function names, return types, and parameter lists should not change in general, the member variables of Problem (and therefore also the constructor) may need to change for a given problem.
+These are the domain-dependent parts of the A-star search. For A* to work properly, all functions in the interfaces "AStarProblem.h" and "AStarState.h" must be implemented. Note that while the function names, return types, and parameter lists should not change in general, the member variables of Problem (and therefore also the constructor) may need to change for a given problem.
 
 preprocessing
 

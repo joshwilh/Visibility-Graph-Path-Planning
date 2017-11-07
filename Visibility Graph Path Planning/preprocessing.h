@@ -60,10 +60,13 @@ double distanceFormula(const Vertex& v1, const Vertex& v2,
 //           contains polygons in the proper format, polygons cannot overlap,
 //           nor can they share vertices, edges, or have a vertex on the edge of
 //           another polygon
-// MODIFIES: graph, polygonFile
+//           polygons is empty
+// MODIFIES: graph, polygonFile, polygons
 // EFFECTS : reads polygonFile, then calls addVertices, then makeConnections
-//           (which calls visibleVertices on each vertex)
-void preProcess(Graph &graph, std::istream& polygonFile);
+//           (which calls visibleVertices on each vertex). polygons can later be
+//           used to call specific functions in preprocessing
+void preProcess(Graph &graph, std::istream& polygonFile,
+                List<List<Vertex>> &polygons);
 
 // REQUIRES: graph is an empty Graph, polygons contains polygon objects with
 //           coordinates in the correct format
