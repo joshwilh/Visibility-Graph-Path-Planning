@@ -80,13 +80,13 @@ void addVertices(Graph &graph, List<List<Vertex>> const &polygons);
 // EFFECTS : Checks each vertex in graph for all visible vertices
 void makeConnections(Graph &graph, List<List<Vertex>> const &polygons);
 
-// REQUIRES: v is a vertex in graph. graph has been successfully passed through
-//           addVertices, v is not in the interior of a polygon,
-//           0 <= index < graph.vertices.size()
+// REQUIRES: v is an Iterator that points to a vertex in graph. graph has been
+//           successfully passed through addVertices, v's vertex is not in the
+//           interior of a polygon.
 // MODIFIES: graph
 // EFFECTS : adds all possible paths from v that are indexed higher (listed
 //           later) in graph to graph as edges
-void visibleVertices(const Vertex *v, Graph &graph, const int index,
+void visibleVertices(List<Vertex>::Iterator v, Graph &graph,
                      List<List<Vertex>> const &polygons);
 
 // REQUIRES: v and check are valid vertices; v != check;

@@ -44,22 +44,19 @@ void Problem::expandOptions(vector<State> &possibleStates,
                             vector<double> &pathCosts,
                             const State &currentState) const {
     // Loop through graph's connections
-    
-    // First connection in graph
-    const Edge* currentEdge = graph.connections.firstItem();
-    
-    for (int i = 0; i < graph.connections.size(); ++i) {
+
+    // Traversal by Iterator
+    List<Edge>::Iterator end = graph.connections.end();
+    for (List<Edge>::Iterator currentEdge = graph.connections.begin();
+         currentEdge != end; ++currentEdge) {
         // Check if currentState is one of the endpoints
-        if (currentState.position == currentEdge->v1) {
-            possibleStates.push_back(State{currentEdge->v2});
-            pathCosts.push_back(currentEdge->length);
-        } else if (currentState.position == currentEdge->v2) {
-            possibleStates.push_back(State{currentEdge->v1});
-            pathCosts.push_back(currentEdge->length);
+        if (currentState.position == (*currentEdge)->v1) {
+            possibleStates.push_back(State{(*currentEdge)->v2});
+            pathCosts.push_back((*currentEdge)->length);
+        } else if (currentState.position == (*currentEdge)->v2) {
+            possibleStates.push_back(State{(*currentEdge)->v1});
+            pathCosts.push_back((*currentEdge)->length);
         }
-        
-        // Move to next edge
-        currentEdge = graph.connections.nextItem(currentEdge);
     }
 }
 

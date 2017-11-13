@@ -128,32 +128,24 @@ void addVertices(Graph &graph, List<List<Vertex>> const &polygons) {
     // Check graph is empty
     assert(graph.vertices.empty() && graph.connections.empty());
     
-    // First polygon in polygons
-    const List<Vertex>* currentPolygon = polygons.firstItem();
-    assert(currentPolygon != nullptr);
-    
-    for (int polygon = 0; polygon < polygons.size(); ++polygon) {
+    // Traversal by Iterator
+    List<List<Vertex>>::Iterator endP = polygons.end();
+    for (List<List<Vertex>>::Iterator currentPolygon = polygons.begin();
+         currentPolygon != endP; ++currentPolygon) {
         
         // Can't have a polygon with fewer than 3 vertices
-        assert(currentPolygon->size() >= 3);
+        assert((*currentPolygon)->size() >= 3);
         
-        // First vertex in current polygon
-        const Vertex* currentVertex = currentPolygon->firstItem();
-        assert(currentVertex != nullptr);
-        
-        for (int i = 0; i < currentPolygon->size(); ++i) {
+        // Traversal by Iterator
+        List<Vertex>::Iterator endV = (*currentPolygon)->end();
+        for (List<Vertex>::Iterator currentVertex = (*currentPolygon)->begin();
+             currentVertex != endV; ++currentVertex) {
             // Each vertex in this polygon
             
             Vertex* newVert = new Vertex;
-            *newVert = *currentVertex;
+            *newVert = **currentVertex;
             graph.vertices.insertEnd(newVert);
-            
-            // Move to next vertex in current polygon
-            currentVertex = currentPolygon->nextItem(currentVertex);
         }
-        
-        // Move to next polygon in polygons
-        currentPolygon = polygons.nextItem(currentPolygon);
     }
 }
 
@@ -168,47 +160,44 @@ void makeConnections(Graph &graph, List<List<Vertex>> const &polygons) {
         return;
     }
     
-    const Vertex* v = graph.vertices.firstItem();
-    
-    for (int i = 0; i < graph.vertices.size(); ++i) {
-        visibleVertices(v, graph, i, polygons);
-        v = graph.vertices.nextItem(v);
+    // Traversal by Iterator
+    List<Vertex>::Iterator end = graph.vertices.end();
+    for (List<Vertex>::Iterator v = graph.vertices.begin(); v != end; ++v) {
+        visibleVertices(v, graph, polygons);
     }
 }
 
-// REQUIRES: v is a vertex in graph. graph has been successfully passed through
-//           addVertices, v is not in the interior of a polygon,
-//           0 <= index < graph.vertices.size()
+// REQUIRES: v is an Iterator that points to a vertex in graph. graph has been
+//           successfully passed through addVertices, v's vertex is not in the
+//           interior of a polygon.
 // MODIFIES: graph
 // EFFECTS : adds all possible paths from v that are indexed higher (listed
 //           later) in graph to graph as edges
-void visibleVertices(const Vertex *v, Graph &graph, const int index,
+void visibleVertices(List<Vertex>::Iterator v, Graph &graph,
                      List<List<Vertex>> const &polygons) {
     
-    // Check requires clause
-    assert(index >= 0 && index < graph.vertices.size());
-    
     // First vertex after v
-    const Vertex* check = graph.vertices.nextItem(v);
+    List<Vertex>::Iterator firstCheck = v;
+    ++firstCheck;
+    
+    // Traversal by Iterator
+    List<Vertex>::Iterator end = graph.vertices.end();
     
     // Loop through higher-indexed vertices above v
-    for (int i = index + 1; i < graph.vertices.size(); ++i) {
+    for (List<Vertex>::Iterator check = firstCheck; check != end; ++check) {
         
-        if (visible(*v, *check, polygons)) {
+        if (visible(**v, **check, polygons)) {
             
             // check is visible from v and vice versa, build an edge
-            double distance = distanceFormula(*v, *check, DIMENSIONS);
+            double distance = distanceFormula(**v, **check, DIMENSIONS);
             
             // Give each new edge pointers to vertices
             // NOTE: vertices in edge are owned by graph's vertices list
-            Edge* newEdge = new Edge{v, check, distance};
+            Edge* newEdge = new Edge{*v, *check, distance};
             
             //Place edge in graph's list
             graph.connections.insertEnd(newEdge);
         }
-        
-        // Increment check to next vertex
-        check = graph.vertices.nextItem(check);
     }
 }
 
@@ -282,32 +271,31 @@ bool visible(const Vertex& v, const Vertex& check,
     }
     
     // End Bug Fix Oct 30, 2017
-    
-    // First polygon
-    const List<Vertex>* pgon = polygons.firstItem();
-    
+
+    // Traversal by Iterator
+    List<List<Vertex>>::Iterator endP = polygons.end();
     // Check all polygons
-    for (int i = 0; i < polygons.size(); ++i) {
+    for (List<List<Vertex>>::Iterator pgon = polygons.begin(); pgon != endP;
+         ++pgon) {
         
-        // First vertex in pgon
-        const Vertex* v1 = pgon->firstItem();
+        // Iterator to first vertex in pgon
+        List<Vertex>::Iterator v1 = (*pgon)->begin();
         
-        for (int j = 0; j < pgon->size(); ++j) {
+        // Traversal by index
+        for (int j = 0; j < (*pgon)->size(); ++j) {
             
             // Get vertex that comes after v1. If v1 is last item in list, v2
             // will be first vertex. Thus [v1, v2] represent all edges
-            const Vertex* v2 = pgon->nextItem(v1);
+            List<Vertex>::Iterator v2 = v1;
+            v2.circularIncrement((*pgon)->begin());
             
-            if (intersect(v, check, *v1, *v2)) {
+            if (intersect(v, check, **v1, **v2)) {
                 return false;
             }
             
             // Increment to next vertex
             v1 = v2;
         }
-        
-        // Increment to next polygon
-        pgon = polygons.nextItem(pgon);
     }
     
     // No intersections found

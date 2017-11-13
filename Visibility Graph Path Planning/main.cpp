@@ -40,7 +40,6 @@ void Vertex_input (Vertex &start, Vertex &goal) {
     goal.poly_size = -1;
 }
 
-//TODO: Write main
 int main(int argc, const char * argv[]) {
     
     // Take in polygon file
@@ -101,8 +100,11 @@ int main(int argc, const char * argv[]) {
     g.vertices.insertStart(goal);
     g.vertices.insertStart(start);
     // Run visibleVertices on start and goal (checks all other vertices)
-    visibleVertices(start, g, 0, polygons);
-    visibleVertices(goal, g, 1, polygons);
+    List<Vertex>::Iterator it_start = g.vertices.begin();
+    List<Vertex>::Iterator it_goal = it_start;
+    ++it_goal;
+    visibleVertices(it_start, g, polygons);
+    visibleVertices(it_goal, g, polygons);
     // Now, start and goal should be properly inserted in the graph
     
     // Perform an A* search
