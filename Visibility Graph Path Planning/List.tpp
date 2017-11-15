@@ -12,21 +12,59 @@
 #include "List.h"
 using namespace std;
 
-// Constructs empty list that DOES NOT own the data
+// Encapsulates code to delete the last node of the list
 template <typename T>
-List<T>::List() :
-List(false) {}
+T* List<T>::deleteSingleNode() {
+    List_Node *temp = tail;
+    T* returnData = temp->data;
+    head = nullptr;
+    tail = nullptr;
+    delete temp;
+    return returnData;
+}
 
-// Constructs empty list, allows specification of ownership flag
+//MODIFIES: this
+//EFFECTS:  copies all nodes from other to this
 template <typename T>
-List<T>::List(bool owner_flag) :
-// Set head and tail to null to avoid garbage value
-owner_of_data(owner_flag), head(nullptr), tail(nullptr), List_size(0){}
+void List<T>::copy_all(const List<T> &other) {
+    List_Node *other_ptr = other.head;
+    if (!other_ptr) {
+        //other is empty
+        return;
+    }
+    // Create first node
+    List_Node *first_node = new List_Node;
+    first_node->data = other_ptr->data;
+    head = first_node;
+    ++List_size;
 
-// Destructor: Deletes all nodes in list. Also deletes data if owner_of_data
-//             is true
+    // Create two pointers to move with linked list as it is created
+    List_Node *prev_ptr = first_node;
+    List_Node *next_ptr = nullptr;
+    
+    other_ptr = other_ptr->next;
+    
+    while (other_ptr) {
+        next_ptr = new List_Node;
+        next_ptr->data = other_ptr->data;
+        prev_ptr->next = next_ptr;
+        
+        prev_ptr = next_ptr;
+        next_ptr = nullptr;
+        
+        other_ptr = other_ptr->next;
+        ++List_size;
+    }
+    
+    //Set the last node's next pointer to null and point last to it
+    prev_ptr->next = nullptr;
+    tail = prev_ptr;
+}
+
+//MODIFIES: this, may invalidate list iterators
+//EFFECTS:  removes all nodes
 template <typename T>
-List<T>::~List() {
+void List<T>::pop_all() {
     if(!empty()) {
         // Delete all nodes
         List_Node* current = head;
@@ -44,9 +82,51 @@ List<T>::~List() {
             if (owner_of_data) {
                 delete current->data;
             }
-            delete current;        
+            delete current;
         }
     }
+}
+
+// Constructs empty list that DOES NOT own the data
+template <typename T>
+List<T>::List() :
+List(false) {}
+
+// Constructs empty list, allows specification of ownership flag
+template <typename T>
+List<T>::List(bool owner_flag) :
+// Set head and tail to null to avoid garbage value
+owner_of_data(owner_flag), head(nullptr), tail(nullptr), List_size(0){}
+
+// Copy Constructor
+// NOTE: New list will NOT own the data, regardless of other's ownership
+// status
+template <typename T>
+List<T>::List(const List<T> &other)
+: List(false) {
+    copy_all(other);
+}
+
+// Destructor: Deletes all nodes in list. Also deletes data if owner_of_data
+//             is true
+template <typename T>
+List<T>::~List() {
+    pop_all();
+}
+
+// MODIFIES: this
+// EFFECTS: deep copies rhs list into this
+// NOTE: New list will NOT own the data, regardless of rhs' ownership status
+template <typename T>
+List<T> & List<T>::operator=(const List<T> &rhs) {
+    // Check for self-assigment
+    if (this == &rhs) { return *this; }
+    pop_all();
+    owner_of_data = false;
+    head = tail = nullptr;
+    List_size = 0;
+    copy_all(rhs);
+    return *this;
 }
 
 // Adds a node to the end of the list
@@ -295,17 +375,6 @@ T* List<T>::at(int index) const {
     }
     
     return ptr->data;
-}
-
-// Encapsulates code to delete the last node of the list
-template <typename T>
-T* List<T>::deleteSingleNode() {
-    List_Node *temp = tail;
-    T* returnData = temp->data;
-    head = nullptr;
-    tail = nullptr;
-    delete temp;
-    return returnData;
 }
 
 // Public constructor. Creates an end Iterator

@@ -35,6 +35,15 @@ private:
     // Encapsulates code to delete the last node of the list
     T* deleteSingleNode();
     
+    //MODIFIES: this
+    //EFFECTS:  copies all nodes from other to this
+    void copy_all(const List<T> &other);
+    
+    //MODIFIES: this, may invalidate list iterators
+    //EFFECTS:  removes all nodes
+    void pop_all();
+
+    
 public:
     // Constructs empty list that DOES NOT own the data
     List();
@@ -42,9 +51,19 @@ public:
     // Constructs empty list, allows specification of ownership flag
     List(bool owner_flag);
     
+    // Copy Constructor
+    // NOTE: New list will NOT own the data, regardless of other's ownership
+    // status
+    List(const List<T> &other);
+    
     // Destructor: Deletes all nodes in list. Also deletes data if owner_of_data
     //             is true
     ~List();
+    
+    // MODIFIES: this
+    // EFFECTS: deep copies rhs list into this
+    // NOTE: New list will NOT own the data, regardless of rhs' ownership status
+    List<T> & operator=(const List<T> &rhs);
     
     // Adds a node to the end of the list
     void insertEnd(T* nodePtr);
