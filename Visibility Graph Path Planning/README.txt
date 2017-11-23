@@ -4,7 +4,7 @@ List
 
 This is a singly-linked list code that can hold any type of data. Note that it uses templates, so List must be used like List<T>, where T is the type of data to store in list.
 List's insertByValue requires that the type T has an operator overload for <.
-Note: DO NOT INCLUDE "List.cpp" in the target membership, as it is #included at the end of "List.h"
+Note: DO NOT INCLUDE "List.tpp" in the target membership, as it is #included at the end of "List.h"
 
 main
 
