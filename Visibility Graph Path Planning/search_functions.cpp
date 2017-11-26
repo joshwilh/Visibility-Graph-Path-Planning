@@ -81,11 +81,11 @@ void expand(const Problem &p, Tree &searchTree,
     bool addThisState = true;
     
     // Build new nodes and place in vector
-    for (int i = 0; i < possibleStates.size(); i++) {
+    for (int i = 0; i < (int) possibleStates.size(); i++) {
         
         addThisState = true;
         
-        for (int j = 0; j < closedList.size(); j++) {
+        for (int j = 0; j < (int) closedList.size(); j++) {
             if (possibleStates.at(i) == closedList.at(j)) {
                 // This state has been visited before
                 addThisState = false;
