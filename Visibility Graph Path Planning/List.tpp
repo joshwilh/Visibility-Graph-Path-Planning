@@ -475,7 +475,7 @@ std::ostream & operator<<(std::ostream &os, const List<T> &L) {
         os << "Empty List" << endl;
     }
     else {
-        cout << "Printing Linked List" << endl;
+        os << "Printing Linked List" << endl;
     
         // Traversal by Iterator
         typename List<T>::Iterator end = L.end();

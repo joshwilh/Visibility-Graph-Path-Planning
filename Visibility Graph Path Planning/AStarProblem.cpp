@@ -68,14 +68,14 @@ void Problem::expandOptions(vector<State> &possibleStates,
 void Problem::printSolution(vector<State> &solution, ostream &os) const {
     // Prints the solution vector (or failure) to os
     if (solution.empty()) {
-        cout << "Failure" << endl;
+        os << "Failure" << endl;
     }
     else {
-        cout << "Success!" << endl;
+        os << "Success!" << endl;
         // Loop backwards through solution vector
         for (int i = (int) solution.size() - 1, j = 1; i >= 0; --i, ++j) {
-            os << j << ": " << *solution.at(i).position << endl;
+            //os << j << ": " << *solution.at(i).position << endl;
+            os << *solution.at(i).position << endl;
         }
-        os << endl;
     }
 }

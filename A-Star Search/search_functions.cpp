@@ -20,8 +20,11 @@ using namespace std;
 // MODIFIES: solution
 // EFFECTS : Performs an A-star search on the provided problem.
 //           solution becomes empty vector if failure, solution path if success
+//           nodesExpanded is incremented by the number of nodes expanded during
+//              the A* search
 //           returns the path cost of the solution if success, -1 if failure
-double AStarSearch(const Problem &p, std::vector<State> &solution) {
+double AStarSearch(const Problem &p, std::vector<State> &solution,
+                   int &nodesExpanded) {
     // Check requires clause
     assert(solution.empty());
     
@@ -47,6 +50,7 @@ double AStarSearch(const Problem &p, std::vector<State> &solution) {
         // Add node choice to closed list now to avoid allowing path to itself
         closedList.push_back(nodeChoice->state);
         
+        ++nodesExpanded;
         expand(p, mainTree, closedList, openList, nodeChoice);
     }
     

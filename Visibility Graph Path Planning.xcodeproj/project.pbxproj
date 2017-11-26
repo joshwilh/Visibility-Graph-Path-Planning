@@ -44,7 +44,6 @@
 		03F76ABB1F928ABD00D8AFCC /* Tree.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Tree.h; sourceTree = "<group>"; };
 		03F76ABC1F928ABD00D8AFCC /* search_functions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = search_functions.cpp; sourceTree = "<group>"; };
 		03F76ABD1F928ABD00D8AFCC /* Tree_Node.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Tree_Node.h; sourceTree = "<group>"; };
-		03F76ABE1F928ABD00D8AFCC /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		03F76ABF1F928ABD00D8AFCC /* Tree.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Tree.cpp; sourceTree = "<group>"; };
 		03F76AC41F929ED100D8AFCC /* polygons.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = polygons.txt; sourceTree = "<group>"; };
 		03F76AC61F92A2D000D8AFCC /* preprocessing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = preprocessing.h; sourceTree = "<group>"; };
@@ -99,7 +98,6 @@
 		03F76AB61F928A9F00D8AFCC /* A-Star Search */ = {
 			isa = PBXGroup;
 			children = (
-				03F76ABE1F928ABD00D8AFCC /* main.cpp */,
 				03F76ABC1F928ABD00D8AFCC /* search_functions.cpp */,
 				03F76AB71F928ABC00D8AFCC /* search_functions.h */,
 				03F76ABD1F928ABD00D8AFCC /* Tree_Node.h */,

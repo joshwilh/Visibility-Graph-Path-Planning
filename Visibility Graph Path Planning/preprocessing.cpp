@@ -58,8 +58,10 @@ static int orientation (Vertex const p1, Vertex const p2, Vertex const p3) {
 // REQUIRES: polygons is an empty List of polygons, 'is' is a valid
 //           input stream that has been opened and is in the correct format
 // MODIFIES: polygons
-// EFFECTS : reads vertices from is and places them into polygons
-static void read_polygons(List<List<Vertex>>& polygons, istream& is) {
+// EFFECTS : reads vertices from is and places them into polygons. Adds the
+//           number of loops run to loop counter
+static void read_polygons(List<List<Vertex>>& polygons, istream& is,
+                          int &loopCounter) {
     assert(polygons.empty());
     
     int polygon_index = 0;
@@ -80,6 +82,8 @@ static void read_polygons(List<List<Vertex>>& polygons, istream& is) {
             v->location = i / DIMENSIONS;
             v->poly_size = num_vertices;
             polygon->insertEnd(v);
+            
+            ++loopCounter;
         }
         
         polygons.insertEnd(polygon);
@@ -108,23 +112,29 @@ Vertex& Vertex::operator=(const Vertex& rhs) {
 // MODIFIES: graph, polygonFile, polygons
 // EFFECTS : reads polygonFile, then calls addVertices, then makeConnections
 //           (which calls visibleVertices on each vertex). polygons can later be
-//           used to call specific functions in preprocessing
+//           used to call specific functions in preprocessing. Adds the loops
+//           run by each preprocessing function to the appropriate loop counter.
 void preProcess(Graph &graph, std::istream& polygonFile,
-                List<List<Vertex>> &polygons) {
+                List<List<Vertex>> &polygons, int &readPolygonsCounter,
+                int &addVerticesCounter, int &makeConnectionsCounter,
+                int &visibleVerticesCounter, int &visibleCounter) {
     
     // polygons will own the dynamically allocated polygons
-    read_polygons(polygons, polygonFile);
+    read_polygons(polygons, polygonFile, readPolygonsCounter);
     
-    addVertices(graph, polygons);
+    addVertices(graph, polygons, addVerticesCounter);
     
-    makeConnections(graph, polygons);
+    makeConnections(graph, polygons, makeConnectionsCounter,
+                    visibleVerticesCounter, visibleCounter);
 }
 
 // REQUIRES: graph is an empty Graph, polygons contains polygon objects with
 //           coordinates in the correct format
 // MODIFIES: graph
-// EFFECTS : all of the vertices in polygons are added to graph
-void addVertices(Graph &graph, List<List<Vertex>> const &polygons) {
+// EFFECTS : all of the vertices in polygons are added to graph. Adds the number
+//           of loops run to loopCounter
+void addVertices(Graph &graph, List<List<Vertex>> const &polygons,
+                 int &loopCounter) {
     // Check graph is empty
     assert(graph.vertices.empty() && graph.connections.empty());
     
@@ -145,6 +155,8 @@ void addVertices(Graph &graph, List<List<Vertex>> const &polygons) {
             Vertex* newVert = new Vertex;
             *newVert = **currentVertex;
             graph.vertices.insertEnd(newVert);
+            
+            ++loopCounter;
         }
     }
 }
@@ -152,8 +164,11 @@ void addVertices(Graph &graph, List<List<Vertex>> const &polygons) {
 // REQUIRES: graph has been successfully passed through addVertices.
 //           polygons contains valid polygon obstacles
 // MODIFIES: graph
-// EFFECTS : Checks each vertex in graph for all visible vertices
-void makeConnections(Graph &graph, List<List<Vertex>> const &polygons) {
+// EFFECTS : Checks each vertex in graph for all visible vertices. Adds the
+//           number of loops performed to loopCounter.
+void makeConnections(Graph &graph, List<List<Vertex>> const &polygons,
+                     int &loopCounter, int &visibleVerticesCounter,
+                     int &visibleCounter) {
     
     // If graph is empty, no connections to be made
     if (graph.vertices.empty()) {
@@ -163,7 +178,10 @@ void makeConnections(Graph &graph, List<List<Vertex>> const &polygons) {
     // Traversal by Iterator
     List<Vertex>::Iterator end = graph.vertices.end();
     for (List<Vertex>::Iterator v = graph.vertices.begin(); v != end; ++v) {
-        visibleVertices(v, graph, polygons);
+        visibleVertices(v, graph, polygons, visibleVerticesCounter,
+                        visibleCounter);
+        
+        ++loopCounter;
     }
 }
 
@@ -172,9 +190,11 @@ void makeConnections(Graph &graph, List<List<Vertex>> const &polygons) {
 //           interior of a polygon.
 // MODIFIES: graph
 // EFFECTS : adds all possible paths from v that are indexed higher (listed
-//           later) in graph to graph as edges
+//           later) in graph to graph as edges. Adds the number of loops run to
+//           loopCounter
 void visibleVertices(List<Vertex>::Iterator v, Graph &graph,
-                     List<List<Vertex>> const &polygons) {
+                     List<List<Vertex>> const &polygons, int &loopCounter,
+                     int &visibleCounter) {
     
     // First vertex after v
     List<Vertex>::Iterator firstCheck = v;
@@ -186,7 +206,7 @@ void visibleVertices(List<Vertex>::Iterator v, Graph &graph,
     // Loop through higher-indexed vertices above v
     for (List<Vertex>::Iterator check = firstCheck; check != end; ++check) {
         
-        if (visible(**v, **check, polygons)) {
+        if (visible(**v, **check, polygons, visibleCounter)) {
             
             // check is visible from v and vice versa, build an edge
             double distance = distanceFormula(**v, **check, DIMENSIONS);
@@ -198,6 +218,7 @@ void visibleVertices(List<Vertex>::Iterator v, Graph &graph,
             //Place edge in graph's list
             graph.connections.insertEnd(newEdge);
         }
+        ++loopCounter;
     }
 }
 
@@ -206,9 +227,10 @@ void visibleVertices(List<Vertex>::Iterator v, Graph &graph,
 //           polygons contains valid polygon objects
 // EFFECTS : returns true if check is visible from v (the line segment
 //           connecting check and v does intersect any polygon edges);
-//           returns false otherwise
+//           returns false otherwise. Adds the number of loops run to
+//           loopCounter
 bool visible(const Vertex& v, const Vertex& check,
-             List<List<Vertex>> const &polygons) {
+             List<List<Vertex>> const &polygons, int &loopCounter) {
 
     // Bug Fix (Oct 29, 2017): Each vertex now carries a polygon index. If these
     // are equal, the vertices are part of the same polygon. Then, check if they
@@ -264,6 +286,8 @@ bool visible(const Vertex& v, const Vertex& check,
     // Check if from same polygon
     if (v.polygon == check.polygon && v.polygon != -1) {
         
+        ++loopCounter;
+        
         // Check if adjacent
         return (abs(v.location - check.location) == 1 ||
             (v.location == 0 && check.location == check.poly_size - 1) ||
@@ -288,6 +312,8 @@ bool visible(const Vertex& v, const Vertex& check,
             // will be first vertex. Thus [v1, v2] represent all edges
             List<Vertex>::Iterator v2 = v1;
             v2.circularIncrement((*pgon)->begin());
+            
+            ++loopCounter;
             
             if (intersect(v, check, **v1, **v2)) {
                 return false;
@@ -351,11 +377,13 @@ bool operator==(const Vertex &lhs, const Vertex &rhs) {
 // MODIFIES: os
 // EFFECTS : Prints the Vertex to os (coordinates only)
 std::ostream & operator<<(std::ostream &os, const Vertex &v) {
-    os << "(";
+    //os << "(";
     for (int i = 0; i < DIMENSIONS - 1; ++i) {
-        os << v.coord[i] << ", ";
+        //os << v.coord[i] << ", ";
+        os << v.coord[i] << " ";
     }
-    os << v.coord[DIMENSIONS - 1] << ")";
+    //os << v.coord[DIMENSIONS - 1] << ")";
+    os << v.coord[DIMENSIONS - 1];
     return os;
 }
 

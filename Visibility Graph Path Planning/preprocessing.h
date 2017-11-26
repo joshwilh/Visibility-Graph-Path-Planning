@@ -64,39 +64,50 @@ double distanceFormula(const Vertex& v1, const Vertex& v2,
 // MODIFIES: graph, polygonFile, polygons
 // EFFECTS : reads polygonFile, then calls addVertices, then makeConnections
 //           (which calls visibleVertices on each vertex). polygons can later be
-//           used to call specific functions in preprocessing
+//           used to call specific functions in preprocessing. Adds the loops
+//           run by each preprocessing function to the appropriate loop counter.
 void preProcess(Graph &graph, std::istream& polygonFile,
-                List<List<Vertex>> &polygons);
+                List<List<Vertex>> &polygons, int &readPolygonsCounter,
+                int &addVerticesCounter, int &makeConnectionsCounter,
+                int &visibleVerticesCounter, int &visibleCounter);
 
 // REQUIRES: graph is an empty Graph, polygons contains polygon objects with
 //           coordinates in the correct format
 // MODIFIES: graph
-// EFFECTS : all of the vertices in polygons are added to graph
-void addVertices(Graph &graph, List<List<Vertex>> const &polygons);
+// EFFECTS : all of the vertices in polygons are added to graph. Adds the number
+//           of loops run to loopCounter
+void addVertices(Graph &graph, List<List<Vertex>> const &polygons,
+                 int &loopCounter);
 
 // REQUIRES: graph has been successfully passed through addVertices.
 //           polygons contains valid polygon obstacles
 // MODIFIES: graph
-// EFFECTS : Checks each vertex in graph for all visible vertices
-void makeConnections(Graph &graph, List<List<Vertex>> const &polygons);
+// EFFECTS : Checks each vertex in graph for all visible vertices. Adds the
+//           number of loops performed to loopCounter.
+void makeConnections(Graph &graph, List<List<Vertex>> const &polygons,
+                     int &loopCounter, int &visibleVerticesCounter,
+                     int &visibleCounter);
 
 // REQUIRES: v is an Iterator that points to a vertex in graph. graph has been
 //           successfully passed through addVertices, v's vertex is not in the
 //           interior of a polygon.
 // MODIFIES: graph
 // EFFECTS : adds all possible paths from v that are indexed higher (listed
-//           later) in graph to graph as edges
+//           later) in graph to graph as edges. Adds the number of loops run to
+//           loopCounter
 void visibleVertices(List<Vertex>::Iterator v, Graph &graph,
-                     List<List<Vertex>> const &polygons);
+                     List<List<Vertex>> const &polygons, int &loopCounter,
+                     int &visibleCounter);
 
 // REQUIRES: v and check are valid vertices; v != check;
 //           v and check are not in the interior of a polgon
 //           polygons contains valid polygon objects
 // EFFECTS : returns true if check is visible from v (the line segment
 //           connecting check and v does intersect any polygon edges);
-//           returns false otherwise
+//           returns false otherwise. Adds the number of loops run to
+//           loopCounter
 bool visible(const Vertex& v, const Vertex& check,
-             List<List<Vertex>> const &polygons);
+             List<List<Vertex>> const &polygons, int &loopCounter);
 
 // REQUIRES: all parameters are valid vertices.
 // EFFECTS : returns true if the line segment [a1, a2] intesects line segment

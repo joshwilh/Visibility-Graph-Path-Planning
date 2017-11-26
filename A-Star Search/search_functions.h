@@ -16,8 +16,11 @@
 // MODIFIES: solution
 // EFFECTS : Performs an A-star search on the provided problem.
 //           solution becomes empty vector if failure, solution path if success
+//           nodesExpanded is incremented by the number of nodes expanded during
+//              the A* search
 //           returns the path cost of the solution if success, -1 if failure
-double AStarSearch(const Problem &p, std::vector<State> &solution);
+double AStarSearch(const Problem &p, std::vector<State> &solution,
+                   int &nodesExpanded);
 
 // MODIFIES: searchTree, openList, expandedNode
 // EFFECTS : Adds all valid expanisions of expandedNode to the tree and the open
