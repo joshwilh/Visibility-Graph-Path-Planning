@@ -50,7 +50,7 @@ int main(int argc, const char * argv[]) {
     time_t programBegin = time(nullptr);
     
     // Total number of visibility graphs that will be produced
-    const int numOfTests = 2;
+    const int numOfTests = 1000;
     
     // Seed random number generation
     srand((int) time(nullptr));
@@ -196,7 +196,7 @@ void swap (double &a, double &b) {
 
 void runTest(int testIndex, ostream &polygonFile, ostream &outputFile) {
     // Parameters for testing
-    static const int maxPolygons = 20;
+    static const int maxPolygons = 30;
     static const int maxVertices = 20;
     static const int numOfSearches = 20;
     
