@@ -37,6 +37,8 @@
 		0376AE651FAE436100AB9841 /* AStarProblem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AStarProblem.cpp; sourceTree = "<group>"; };
 		0376AE661FAE436100AB9841 /* AStarProblem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AStarProblem.h; sourceTree = "<group>"; };
 		03A593C71FCA884D00DB9755 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		03A593C81FCA91CB00DB9755 /* output.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = output.txt; sourceTree = "<group>"; };
+		03A593C91FCA91CB00DB9755 /* output_polygons.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = output_polygons.txt; sourceTree = "<group>"; };
 		03A7546C1F94D9C80022091A /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = SOURCE_ROOT; };
 		03A7546D1F94E66A0022091A /* preprocessing.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = preprocessing.cpp; sourceTree = "<group>"; };
 		03F76AB71F928ABC00D8AFCC /* search_functions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = search_functions.h; sourceTree = "<group>"; };
@@ -95,6 +97,8 @@
 				03744DDD1FB0BE5600DD09EC /* AStarState.cpp */,
 				03744DDE1FB0BE5600DD09EC /* AStarState.h */,
 				03686AF81F92806F008059C2 /* main.cpp */,
+				03A593C91FCA91CB00DB9755 /* output_polygons.txt */,
+				03A593C81FCA91CB00DB9755 /* output.txt */,
 				03A7546D1F94E66A0022091A /* preprocessing.cpp */,
 				03F76AC61F92A2D000D8AFCC /* preprocessing.h */,
 				03F76AC41F929ED100D8AFCC /* polygons.txt */,
