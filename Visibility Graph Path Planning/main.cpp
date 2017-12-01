@@ -19,7 +19,11 @@
 
 using namespace std;
 
-const double pi = 3.14159265358979323846;
+const double PI = 3.14159265358979323846;
+// Parameters for testing
+static const int MAXPOLYGONS = 100;
+static const int MAXVERTICES = 20;
+static const int NUMOFSEARCHES = 20;
 
 // Initializes start and goal using user input
 void Vertex_input (Vertex &start, Vertex &goal);
@@ -64,8 +68,11 @@ int main(int argc, const char * argv[]) {
         runTest(testIndex, polygonFile, outputFile);
     }
     
-    // Output total testing time
+    // Output total testing time and testing parameters
     outputFile << "Total_Time: " << time(nullptr) - programBegin << endl;
+    outputFile << "Testing_Parameters: MAXPOLYGONS: " << MAXPOLYGONS 
+               << " MAXVERTICES: " << MAXVERTICES << " NUMOFSEARCHES: " 
+               << NUMOFSEARCHES << endl;
     
     polygonFile.close();
     outputFile.close();
@@ -195,10 +202,6 @@ void swap (double &a, double &b) {
 }
 
 void runTest(int testIndex, ostream &polygonFile, ostream &outputFile) {
-    // Parameters for testing
-    static const int maxPolygons = 30;
-    static const int maxVertices = 20;
-    static const int numOfSearches = 20;
     
     clock_t generationStart = clock(); // Time in clock ticks
     
@@ -222,8 +225,8 @@ void runTest(int testIndex, ostream &polygonFile, ostream &outputFile) {
     // Define plane for search as square from (-100, -100) at bottom left
     // to (100, 100) at top right
     
-    //random int in interval [1,maxPolygons]
-    const int numOfPolygons = (rand() % maxPolygons) + 1;
+    //random int in interval [1,MAXPOLYGONS]
+    const int numOfPolygons = (rand() % MAXPOLYGONS) + 1;
     int totalVertices = 0;
     
     // Store center coordinates and radii of all circles to avoid overlap
@@ -270,13 +273,13 @@ void runTest(int testIndex, ostream &polygonFile, ostream &outputFile) {
             arrCenters[polygonIndex] = center;
             arrRadii[polygonIndex] = radius;
             
-            //random int in [3,maxVertices]
-            int numOfVertices = (rand() % (maxVertices - 2)) + 3;
+            //random int in [3,MAXVERTICES]
+            int numOfVertices = (rand() % (MAXVERTICES - 2)) + 3;
             // Store an angle for each vertex to be placed
             double *angles = new double[numOfVertices];
-            // Fill with random angles [0, 2*pi]
+            // Fill with random angles [0, 2*PI]
             for (int i = 0; i < numOfVertices; ++i) {
-                angles[i] = fRand(0, 2 * pi);
+                angles[i] = fRand(0, 2 * PI);
             }
             // Sort angles into CCW order
             insertionSort(angles, numOfVertices);
@@ -306,12 +309,12 @@ void runTest(int testIndex, ostream &polygonFile, ostream &outputFile) {
     // number of polygons and number of vertices
     outputFile << numOfPolygons << " " << totalVertices << endl;
     
-    // Generate numOfSearches pairs of start and end points that do not lie
+    // Generate NUMOFSEARCHES pairs of start and end points that do not lie
     // inside any polygon
-    Vertex startPoints[numOfSearches];
-    Vertex endPoints[numOfSearches];
+    Vertex startPoints[NUMOFSEARCHES];
+    Vertex endPoints[NUMOFSEARCHES];
     
-    for (int i = 0; i < 2*numOfSearches; ++i) {
+    for (int i = 0; i < 2*NUMOFSEARCHES; ++i) {
         bool goodPoint = false;
         while (!goodPoint) {
             // Set a random point
@@ -384,7 +387,7 @@ void runTest(int testIndex, ostream &polygonFile, ostream &outputFile) {
     outputFile << preprocessTime << endl << endl;
     
     // Run each Search
-    for (int search = 0; search < numOfSearches; ++search) {
+    for (int search = 0; search < NUMOFSEARCHES; ++search) {
         // Copy-construct a new graph (won't own data, but that's ok)
         Graph searchGraph(ownerGraph);
         
