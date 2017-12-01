@@ -85,11 +85,24 @@ void expand(const Problem &p, Tree &searchTree,
         
         addThisState = true;
         
+        // Check closedList for this State. If found, don't expand
         for (int j = 0; j < (int) closedList.size(); j++) {
             if (possibleStates.at(i) == closedList.at(j)) {
                 // This state has been visited before
                 addThisState = false;
                 break;
+            }
+        }
+        // Check openList for this State. If found, don't expand.
+        if (addThisState) {
+            // Traversal by Iterator
+            auto end = openList.end();
+            for (auto it = openList.begin(); it != end; ++it) {
+                if (possibleStates.at(i) == (*it)->state) {
+                    // This state is already on the open list
+                    addThisState = false;
+                    break;
+                }
             }
         }
         
