@@ -238,7 +238,9 @@ void runTest(int testIndex, ostream &polygonFile, ostream &outputFile) {
     double *arrRadii = new double[numOfPolygons];
     
     // Create single polygons file for this test
+    // Set high precision to avoid floating-point errors during testing
     ofstream localPolygonFile("polygons.txt");
+    localPolygonFile.precision(20);
     
     // Each polygon to be generated
     for (int polygonIndex = 0; polygonIndex < numOfPolygons; ++polygonIndex) {
