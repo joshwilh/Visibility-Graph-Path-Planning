@@ -33,13 +33,13 @@ polygon obstacle file format
 Obstacle files must contain convex polygons represented as the (x,y) coordinates of vertices, preceded by the total number of vertices in the polygon. The vertices must be in CW or CCW orientation about the polygon. For example, two squares could be represented as:
 "4\n0 0 0 1 1 1 1 0\n4\n 2 2 2 3 3 3 3 2"
 
-Testing Code: "output_polygons.txt" file format
+Testing Code: "output_polygons.out" file format
 
 The output_polygons file contains the contents of every "polygons.txt" generated during testing. Each entry begins with "test_####", then a blank line, and is followed by contents identical to "polygons.txt". Another blank line is placed after each set of polygons, at which point the next entry begins.
 
-Testing Code: "output.txt" file format
+Testing Code: "output.out" file format
 
-The output file contains information regarding each test run by the testing code. Each entry begins with "test_####", then a blank line, followed by a line containing the number of polygons generated and the number of total vertices in all of those polygons. The next line contains the number of clock cycles required by the random polygon and start/end point generation. The next line contains the number of vertices and edges in the visibility graph, not including the start and end vertices. Following this line, the numbers of loops run by each of the preprocessing functions are printed. The next line holds the total number of clock cycles required for preprocessing. After this information, information about each A* search is printed. This begins with the coordinates of the start and end points. Then, the word "Failure" or "Success!" is printed. If the search was successful, the solution path and distance are printed. Then, the size of the visibility graph including the start and end vertices is printed, if A* was needed. This is followed by a line containing the number of nodes expanded by the A* search and the total time required by A*, if A* was needed. The final line in the output file is the total number of seconds required by the program.
+The output file contains information regarding each test run by the testing code. Each entry begins with "test_####", then a blank line, followed by a line containing the number of polygons generated and the number of total vertices in all of those polygons. The next line contains the number of clock cycles required by the random polygon and start/end point generation. The next line contains the number of vertices and edges in the visibility graph, not including the start and end vertices. Following this line, the numbers of loops run by each of the preprocessing functions are printed. The next line holds the total number of clock cycles required for preprocessing. After this information, information about each A* search is printed. This begins with the coordinates of the start and end points. Then, the word "Failure" or "Success!" is printed. If the search was successful, the solution path and distance are printed. Then, the size of the visibility graph including the start and end vertices is printed, if A* was needed. This is followed by a line containing the number of nodes expanded by the A* search and the total time required by A*, if A* was needed. The final lines in the output file include the total number of seconds required by the program and the testing parameters.
 Format:
 test_[test number]\n
 [number of polygons generated] [total number of vertices in all generated polygons]
@@ -56,3 +56,13 @@ Each A* section:
 [Solution distance (if success) - this is the last line of this section if start and end were directly visible from each other]
 [number of vertices in visibility graph (including start/end)] [number of edges in visibility graph (including start/end)]
 [number of nodes expanded by A*] [number of clock cycles required for A*]\n
+
+postprocess
+
+This code takes in an output file and processes it into a MATLAB-friendly format (rows and columns). The structure of the post-processed files are as follows:
+Visibility Graph (pre-process) file consists of rows of these values, separated by spaces as shown:
+[number of vertices in visibility graph] [number of edges in visibility graph] [readPolygon loop counter] [addVertices loop counter] [makeConnections loop counter] [visibleVertices loop counter] [visible loop counter] [clock cycles]\n
+A* file consists of one special row containing the number of success and failures:
+[number of successes] [number of failures]\n
+Then, the file consists of rows of these values, separated by spaces as shown:
+[number of vertices in visibility graph (including start and goal)] [number of edges] [number of nodes expanded] [clock cycles]\n
