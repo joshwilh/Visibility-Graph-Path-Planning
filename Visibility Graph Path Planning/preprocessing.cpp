@@ -44,9 +44,9 @@ double distanceFormula(const Vertex& v1, const Vertex& v2,
 //           Credit: http://www.geeksforgeeks.org/orientation-3-ordered-points/
 static int orientation (Vertex const p1, Vertex const p2, Vertex const p3) {
     // Orientation formula: (y2 - y1)*(x3 - x2) - (y3 - y2)*(x2 - x1)
-    int result = (p2.coord[1] - p1.coord[1]) * (p3.coord[0] - p2.coord[0])
+    double result = (p2.coord[1] - p1.coord[1]) * (p3.coord[0] - p2.coord[0])
                  - (p3.coord[1] - p2.coord[1]) * (p2.coord[0] - p1.coord[0]);
-    if (result == 0) {
+    if (compareDoubles(result, 0.0)) {
         return 0;
     }
     if (result > 0) {

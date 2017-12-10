@@ -114,7 +114,8 @@ void AStarSuccessFailure(istream &is, ostream &os) {
         }
     }
     
-    os << successCount << " " << failCount << " " << endl;
+    // Note: Print 0s to ensure rectangular matrix for MATLAB
+    os << successCount << " " << failCount << " 0 0 " << endl;
 }
 
 void AStarHelper(istream &is, ostream &os) {
