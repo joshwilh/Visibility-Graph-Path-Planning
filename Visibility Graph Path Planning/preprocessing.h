@@ -99,6 +99,19 @@ void visibleVertices(List<Vertex>::Iterator v, Graph &graph,
                      List<List<Vertex>> const &polygons, int &loopCounter,
                      int &visibleCounter);
 
+// NOTE: This overload is for use when finding the edges added by start and goal
+//       in the visibility graph.
+// REQUIRES: v is an Iterator that points to a vertex in graph. graph has been
+//           successfully passed through addVertices, v's vertex is not in the
+//           interior of a polygon.
+// MODIFIES: graph
+// EFFECTS : adds all possible paths from v that are indexed higher (listed
+//           later) in graph to graph as edges. Also adds these edges to victims
+//           for later deletion. Adds the number of loops run to loopCounter.
+void visibleVertices(List<Vertex>::Iterator v, Graph &graph,
+                     List<List<Vertex>> const &polygons, int &loopCounter,
+                     int &visibleCounter, List<Edge> &victims);
+
 // REQUIRES: v and check are valid vertices; v != check;
 //           v and check are not in the interior of a polgon
 //           polygons contains valid polygon objects

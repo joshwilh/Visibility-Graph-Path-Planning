@@ -21,7 +21,7 @@ using namespace std;
 
 const double PI = 3.14159265358979323846;
 // Parameters for testing
-static const int MAXPOLYGONS = 100;
+static const int MAXPOLYGONS = 30;
 static const int MAXVERTICES = 20;
 static const int NUMOFSEARCHES = 20;
 
@@ -50,115 +50,115 @@ int main(int argc, const char * argv[]) {
     
     ////////////// Begin testing code //////////////////////
     
-//    // Total runtime in seconds
-//    time_t programBegin = time(nullptr);
-//
-//    // Total number of visibility graphs that will be produced
-//    const int numOfTests = 1000;
-//
-//    // Seed random number generation
-//    srand((int) time(nullptr));
-//
-//    // Create polygons and output files
-//    ofstream polygonFile("output_polygons.out");
-//    ofstream outputFile("output.out");
-//
-//    // Each test
-//    for (int testIndex = 0; testIndex < numOfTests; ++testIndex) {
-//        runTest(testIndex, polygonFile, outputFile);
-//    }
-//
-//    // Output total testing time and testing parameters
-//    outputFile << "Total_Time: " << time(nullptr) - programBegin << endl;
-//    outputFile << "Testing_Parameters: MAXPOLYGONS: " << MAXPOLYGONS
-//               << " MAXVERTICES: " << MAXVERTICES << " NUMOFSEARCHES: "
-//               << NUMOFSEARCHES << endl;
-//
-//    polygonFile.close();
-//    outputFile.close();
+    // Total runtime in seconds
+    time_t programBegin = time(nullptr);
+
+    // Total number of visibility graphs that will be produced
+    const int numOfTests = 10;
+
+    // Seed random number generation
+    srand((int) time(nullptr));
+
+    // Create polygons and output files
+    ofstream polygonFile("output_polygons.out");
+    ofstream outputFile("output.out");
+
+    // Each test
+    for (int testIndex = 0; testIndex < numOfTests; ++testIndex) {
+        runTest(testIndex, polygonFile, outputFile);
+    }
+
+    // Output total testing time and testing parameters
+    outputFile << "Total_Time: " << time(nullptr) - programBegin << endl;
+    outputFile << "Testing_Parameters: MAXPOLYGONS: " << MAXPOLYGONS
+               << " MAXVERTICES: " << MAXVERTICES << " NUMOFSEARCHES: "
+               << NUMOFSEARCHES << endl;
+
+    polygonFile.close();
+    outputFile.close();
     
     ////////////// End testing code //////////////////////
     
     ////////////// Begin single run code //////////////////////
     
-    // Take in polygon file
-    cout << "Enter a filename (polygon obstacles): ";
-    string polygon_filename;
-    cin >> polygon_filename;
-    cout << endl;
-
-    // Check if polygon file opens properly
-    ifstream polygon_fin;
-    polygon_fin.open(polygon_filename);
-
-    if(!polygon_fin){
-        cout << "Error opening file: " << polygon_filename << endl;
-        return 1;
-    }
-
-    // Testing Preprocessing (see README)
-    Graph g;
-    // Hold the polygons List in main for checking the start and goal
-    List<List<Vertex>> polygons(true);
-
-    // Need dummy counters (see testing code for actual use)
-    int dummyCounter = 0;
-    preProcess(g, polygon_fin, polygons, dummyCounter, dummyCounter,
-               dummyCounter, dummyCounter, dummyCounter);
-
-    polygon_fin.close();
-
-    // cout << g << endl;
-
-    Vertex *start = new Vertex;
-    Vertex *goal = new Vertex;
-    // Take start and goal input for A*
-    Vertex_input(*start, *goal);
-
-    // Create start and goal states
-    State startState = {start};
-    State goalState = {goal};
-
-    // Create a problem
-    Problem prob(g, startState, goalState);
-
-    // Create a solution vector
-    vector<State> solution;
-
-    // Check visibility between start and goal
-    if (visible(*start, *goal, polygons, dummyCounter)) {
-        // Create and print the solution
-        cout << "Distance: " << distanceFormula(*start, *goal, DIMENSIONS)
-             << endl;
-        solution.push_back(goalState);
-        solution.push_back(startState);
-        prob.printSolution(solution, cout);
-
-        delete start;
-        delete goal;
-        return 0;
-    }
-
-    // Add start and goal to graph (graph now owns them)
-    g.vertices.insertStart(goal);
-    g.vertices.insertStart(start);
-    // Run visibleVertices on start and goal (checks all other vertices)
-    List<Vertex>::Iterator it_start = g.vertices.begin();
-    List<Vertex>::Iterator it_goal = it_start;
-    ++it_goal;
-    visibleVertices(it_start, g, polygons, dummyCounter, dummyCounter);
-    visibleVertices(it_goal, g, polygons, dummyCounter, dummyCounter);
-    // Now, start and goal should be properly inserted in the graph
-    
-    cout << g << endl;
-
-    // Perform an A* search
-    size_t dummySize = 0;
-    double distance = AStarSearch(prob, solution, dummyCounter, dummyCounter,
-                                  dummySize);
-    // Print solution
-    cout << "Distance: " << distance << endl;
-    prob.printSolution(solution, cout);
+//    // Take in polygon file
+//    cout << "Enter a filename (polygon obstacles): ";
+//    string polygon_filename;
+//    cin >> polygon_filename;
+//    cout << endl;
+//
+//    // Check if polygon file opens properly
+//    ifstream polygon_fin;
+//    polygon_fin.open(polygon_filename);
+//
+//    if(!polygon_fin){
+//        cout << "Error opening file: " << polygon_filename << endl;
+//        return 1;
+//    }
+//
+//    // Testing Preprocessing (see README)
+//    Graph g;
+//    // Hold the polygons List in main for checking the start and goal
+//    List<List<Vertex>> polygons(true);
+//
+//    // Need dummy counters (see testing code for actual use)
+//    int dummyCounter = 0;
+//    preProcess(g, polygon_fin, polygons, dummyCounter, dummyCounter,
+//               dummyCounter, dummyCounter, dummyCounter);
+//
+//    polygon_fin.close();
+//
+//    // cout << g << endl;
+//
+//    Vertex *start = new Vertex;
+//    Vertex *goal = new Vertex;
+//    // Take start and goal input for A*
+//    Vertex_input(*start, *goal);
+//
+//    // Create start and goal states
+//    State startState = {start};
+//    State goalState = {goal};
+//
+//    // Create a problem
+//    Problem prob(g, startState, goalState);
+//
+//    // Create a solution vector
+//    vector<State> solution;
+//
+//    // Check visibility between start and goal
+//    if (visible(*start, *goal, polygons, dummyCounter)) {
+//        // Create and print the solution
+//        cout << "Distance: " << distanceFormula(*start, *goal, DIMENSIONS)
+//             << endl;
+//        solution.push_back(goalState);
+//        solution.push_back(startState);
+//        prob.printSolution(solution, cout);
+//
+//        delete start;
+//        delete goal;
+//        return 0;
+//    }
+//
+//    // Add start and goal to graph (graph now owns them)
+//    g.vertices.insertStart(goal);
+//    g.vertices.insertStart(start);
+//    // Run visibleVertices on start and goal (checks all other vertices)
+//    List<Vertex>::Iterator it_start = g.vertices.begin();
+//    List<Vertex>::Iterator it_goal = it_start;
+//    ++it_goal;
+//    visibleVertices(it_start, g, polygons, dummyCounter, dummyCounter);
+//    visibleVertices(it_goal, g, polygons, dummyCounter, dummyCounter);
+//    // Now, start and goal should be properly inserted in the graph
+//
+//    cout << g << endl;
+//
+//    // Perform an A* search
+//    size_t dummySize = 0;
+//    double distance = AStarSearch(prob, solution, dummyCounter, dummyCounter,
+//                                  dummySize);
+//    // Print solution
+//    cout << "Distance: " << distance << endl;
+//    prob.printSolution(solution, cout);
     
     ////////////// End single run code //////////////////////
      
@@ -400,6 +400,9 @@ void runTest(int testIndex, ostream &polygonFile, ostream &outputFile) {
     for (int search = 0; search < NUMOFSEARCHES; ++search) {
         // Copy-construct a new graph (won't own data, but that's ok)
         Graph searchGraph(ownerGraph);
+        // This list will ensure deletion of any newly-created edges for
+        // searchGraph
+        List<Edge> victims(true);
         
         Vertex *start = &startPoints[search];
         Vertex *goal = &endPoints[search];
@@ -437,9 +440,9 @@ void runTest(int testIndex, ostream &polygonFile, ostream &outputFile) {
             List<Vertex>::Iterator it_goal = it_start;
             ++it_goal;
             visibleVertices(it_start, searchGraph, polygons, dummyCounter,
-                            dummyCounter2);
+                            dummyCounter2, victims);
             visibleVertices(it_goal, searchGraph, polygons, dummyCounter,
-                            dummyCounter2);
+                            dummyCounter2, victims);
             // Now, start and goal should be properly inserted in the graph
         
             // Start the clock for A*

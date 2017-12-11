@@ -8,7 +8,7 @@ Note: DO NOT INCLUDE "List.tpp" in the target membership, as it is #included at 
 
 main
 
-The main driver for the program.
+The main driver for the program. To use uncomment either the testing code or the single run code and comment out the other.
 If the testing code is used: Runs the specified amount of tests, no user input is required.
 If the single run code is used: Requests the input file that contains the list of polygon obstacle coordinates from the user. Calls all functions related to the visibility graph path planning program.
 
