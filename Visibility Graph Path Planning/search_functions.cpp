@@ -108,11 +108,12 @@ double AStarSearch(const Problem &p, std::vector<State> &solution,
     assert(solution.empty());
     
     // Create tree, open list, and closed list
-    Tree mainTree(p.getRootNode());
+    auto rootPtr = p.getRootNode();
+    Tree mainTree(rootPtr);
     maxTreeSize = mainTree.size();
     
     List<Tree_Node> openList(false);
-    openList.insertByValue(p.getRootNode());
+    openList.insertByValue(rootPtr);
     
     vector<State> closedList;
     
