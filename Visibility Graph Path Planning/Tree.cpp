@@ -14,7 +14,7 @@ using namespace std;
 
 // Default constructor
 Tree::Tree(Tree_Node *rootNode)
-: root(rootNode) {}
+: root(rootNode), treeSize(1) {}
 
 // Destructor
 Tree::~Tree() {
@@ -31,14 +31,15 @@ void Tree::deleteDown(Tree_Node* nodeToDelete) {
     nodeToDelete = nullptr;
 }
 
-// Adds new node to tree as child of parent node
+// Adds new node to tree as child of parent node, increments size.
 void Tree::addNode(Tree_Node *newNode) {
     newNode->parent->childList.insertEnd(newNode);
+    ++treeSize;
 }
 
 // REQUIRES: nodePtr points to a valid node that is NOT the root node
 // Removes specified node from tree. Also deletes all parent nodes if their
-// child lists become empty
+// child lists become empty. Decrements size.
 void Tree::removeNode(Tree_Node* nodePtr) {
     if (!nodePtr->childList.empty()) {
         cout << "Error, cannot delete node with children." << endl;
@@ -58,4 +59,10 @@ void Tree::removeNode(Tree_Node* nodePtr) {
         }
     }
     delete nodePtr;
+    --treeSize;
+}
+
+// Returns the size of the tree
+int Tree::size() {
+    return treeSize;
 }

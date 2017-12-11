@@ -39,7 +39,7 @@ The output_polygons file contains the contents of every "polygons.txt" generated
 
 Testing Code: "output.out" file format
 
-The output file contains information regarding each test run by the testing code. Each entry begins with "test_####", then a blank line, followed by a line containing the number of polygons generated and the number of total vertices in all of those polygons. The next line contains the number of clock cycles required by the random polygon and start/end point generation. The next line contains the number of vertices and edges in the visibility graph, not including the start and end vertices. Following this line, the numbers of loops run by each of the preprocessing functions are printed. The next line holds the total number of clock cycles required for preprocessing. After this information, information about each A* search is printed. This begins with the coordinates of the start and end points. Then, the word "Failure" or "Success!" is printed. If the search was successful, the solution path and distance are printed. Then, the size of the visibility graph including the start and end vertices is printed, if A* was needed. This is followed by a line containing the number of nodes expanded by the A* search and the total time required by A*, if A* was needed. The final lines in the output file include the total number of seconds required by the program and the testing parameters.
+The output file contains information regarding each test run by the testing code. Each entry begins with "test_####", then a blank line, followed by a line containing the number of polygons generated and the number of total vertices in all of those polygons. The next line contains the number of clock cycles required by the random polygon and start/end point generation. The next line contains the number of vertices and edges in the visibility graph, not including the start and end vertices. Following this line, the numbers of loops run by each of the preprocessing functions are printed. The next line holds the total number of clock cycles required for preprocessing. After this information, information about each A* search is printed. This begins with the coordinates of the start and end points. Then, the word "Failure" or "Success!" is printed. If the search was successful, the solution path and distance are printed. Then, the size of the visibility graph including the start and end vertices is printed, if A* was needed. This is followed by a line containing the number of nodes expanded by the A* search and the total time required by A*, if A* was needed. Then, another line follows with the maximum search tree size during A* and the memory used by the program just before A* returned. The final lines in the output file include the total number of seconds required by the program and the testing parameters.
 Format:
 test_[test number]\n
 [number of polygons generated] [total number of vertices in all generated polygons]
@@ -55,7 +55,8 @@ Each A* section:
 [Solution path (if success)]
 [Solution distance (if success) - this is the last line of this section if start and end were directly visible from each other]
 [number of vertices in visibility graph (including start/end)] [number of edges in visibility graph (including start/end)]
-[number of nodes expanded by A*] [number of clock cycles required for A*]\n
+[number of nodes expanded by A*] [number of clock cycles required for A*]
+[maximum search tree size] [memory usage at end of A*]\n
 
 postprocess
 

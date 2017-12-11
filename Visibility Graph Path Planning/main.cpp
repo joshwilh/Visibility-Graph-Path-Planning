@@ -153,7 +153,9 @@ int main(int argc, const char * argv[]) {
     cout << g << endl;
 
     // Perform an A* search
-    double distance = AStarSearch(prob, solution, dummyCounter);
+    size_t dummySize = 0;
+    double distance = AStarSearch(prob, solution, dummyCounter, dummyCounter,
+                                  dummySize);
     // Print solution
     cout << "Distance: " << distance << endl;
     prob.printSolution(solution, cout);
@@ -445,7 +447,10 @@ void runTest(int testIndex, ostream &polygonFile, ostream &outputFile) {
             
             // Perform an A* search
             int nodesExpandedCounter = 0;
-            double distance = AStarSearch(prob, solution, nodesExpandedCounter);
+            int maxTreeSize = 0;
+            size_t memoryUse = 0;
+            double distance = AStarSearch(prob, solution, nodesExpandedCounter,
+                                          maxTreeSize, memoryUse);
             
             // Stop the clock for A*
             clock_t AStarTime = clock() - AStarStart;
@@ -454,9 +459,9 @@ void runTest(int testIndex, ostream &polygonFile, ostream &outputFile) {
             prob.printSolution(solution, outputFile);
             outputFile << distance << endl;
             outputFile << searchGraph.vertices.size() << " "
-            << searchGraph.connections.size() << endl;
-            outputFile << nodesExpandedCounter << " " << AStarTime << endl
-                       << endl;
+                       << searchGraph.connections.size() << endl;
+            outputFile << nodesExpandedCounter << " " << AStarTime << endl;
+            outputFile << maxTreeSize << " " << memoryUse << endl << endl;
         }
     }
     
