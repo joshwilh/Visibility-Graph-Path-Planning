@@ -66,4 +66,4 @@ Visibility Graph (pre-process) file consists of rows of these values, separated 
 A* file consists of one special row containing the number of success and failures:
 [number of successes] [number of failures] 0 0\n
 Then, the file consists of rows of these values, separated by spaces as shown:
-[number of vertices in visibility graph (including start and goal)] [number of edges] [number of nodes expanded] [clock cycles]\n
+[number of vertices in visibility graph (including start and goal)] [number of edges] [number of nodes expanded] [clock cycles] [maximum search tree size] [memory usage at end of A*]\n
