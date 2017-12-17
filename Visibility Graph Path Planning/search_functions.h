@@ -44,17 +44,4 @@ void expand(const Problem &p, Tree &searchTree,
 void findSoln(const Tree &searchTree, const Tree_Node* goalNode,
               std::vector<State> &solution);
 
-// Begin Code for Finding Current Memory Usage
-
-//// EFFECTS: Returns the current amount of private memory used
-//long getCurrentMemory() {
-//    int who = RUSAGE_SELF;
-//    struct rusage usage;
-//    int ret;
-//
-//    ret = getrusage(who, &usage);
-//
-//    return usage.ru_idrss;
-//}
-
 #endif /* SEARCH_FUNCTIONS_H */

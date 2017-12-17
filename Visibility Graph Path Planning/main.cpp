@@ -21,7 +21,7 @@ using namespace std;
 
 const double PI = 3.14159265358979323846;
 // Parameters for testing
-static const int MAXPOLYGONS = 30;
+static const int MAXPOLYGONS = 100;
 static const int MAXVERTICES = 20;
 static const int NUMOFSEARCHES = 20;
 
@@ -54,7 +54,7 @@ int main(int argc, const char * argv[]) {
     time_t programBegin = time(nullptr);
 
     // Total number of visibility graphs that will be produced
-    const int numOfTests = 10;
+    const int numOfTests = 1000;
 
     // Seed random number generation
     srand((int) time(nullptr));
@@ -329,19 +329,22 @@ void runTest(int testIndex, ostream &polygonFile, ostream &outputFile) {
         while (!goodPoint) {
             // Set a random point
             Vertex point = {fRand(-100, 100), fRand(-100, 100), -1, -1, -1};
+            goodPoint = true;
             for (int j = 0; j < numOfPolygons; ++j) {
                 // Check whether inside any polygon
                 if (distanceFormula(arrCenters[j], point, DIMENSIONS)
                     <= arrRadii[j]) {
+                    goodPoint = false;
                     break;
                 }
             }
-            goodPoint = true;
-            // Set as start or end
-            if (i % 2 == 0) {
-                startPoints[i / 2] = point;
-            } else {
-                endPoints[i / 2] = point;
+            if (goodPoint) {
+                // Set as start or end
+                if (i % 2 == 0) {
+                    startPoints[i / 2] = point;
+                } else {
+                    endPoints[i / 2] = point;
+                }
             }
         }
     }

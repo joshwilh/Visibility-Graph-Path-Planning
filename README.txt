@@ -64,6 +64,6 @@ This code takes in an output file and processes it into a MATLAB-friendly format
 Visibility Graph (pre-process) file consists of rows of these values, separated by spaces as shown:
 [number of vertices in visibility graph] [number of edges in visibility graph] [readPolygon loop counter] [addVertices loop counter] [makeConnections loop counter] [visibleVertices loop counter] [visible loop counter] [clock cycles]\n
 A* file consists of one special row containing the number of success and failures:
-[number of successes] [number of failures] 0 0\n
+[number of successes] [number of failures] 0 0 0 0\n
 Then, the file consists of rows of these values, separated by spaces as shown:
 [number of vertices in visibility graph (including start and goal)] [number of edges] [number of nodes expanded] [clock cycles] [maximum search tree size] [memory usage at end of A*]\n
