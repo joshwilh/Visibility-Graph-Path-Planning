@@ -18,10 +18,6 @@ Single-Run Mode
 
 Testing Mode
 
-0. Compiling
-
-To compile the visibility graph code, use the "make pathplan.exe" command. To compile the postprocess code, use the "make postprocess.exe" command.
-
 1. Uncomment the code between "Begin testing code" and "End testing code" in main.cpp. Comment out the code between "Begin single run code" and "End single run code".
 
 2. Set the testing parameters near the top of main.cpp. The default number of visibility graph tests is 1000. Change this number in line 57 of main.cpp if desired.
