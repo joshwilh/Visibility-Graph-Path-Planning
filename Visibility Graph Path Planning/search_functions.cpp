@@ -15,6 +15,7 @@
 
 using namespace std;
 
+// This code is used to allow the current memory usage to be found on any OS
 /*
  * Author:  David Robert Nadeau
  * Site:    http://NadeauSoftware.com/
