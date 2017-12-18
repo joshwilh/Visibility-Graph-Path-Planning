@@ -1,5 +1,54 @@
 README for Visibility Graph Path Planning
 
+Instructions for Use
+
+
+Single-Run Mode
+
+1. Comment out the code between "Begin testing code" and "End testing code" in main.cpp. Uncomment the code between "Begin single run code" and "End single run code".
+
+2. Compile the path planning code by using the "make pathplan.exe" command.
+
+3. Create a polygon file in the correct format (see below).
+
+4. Run the path planning program with the "./pathplan.exe" command. Follow the prompts by providing the polygon file name and start and goal points.
+
+5. The program will output a solution path and distance to the console.
+
+
+Testing Mode
+
+0. Compiling
+
+To compile the visibility graph code, use the "make pathplan.exe" command. To compile the postprocess code, use the "make postprocess.exe" command.
+
+1. Uncomment the code between "Begin testing code" and "End testing code" in main.cpp. Comment out the code between "Begin single run code" and "End single run code".
+
+2. Set the testing parameters near the top of main.cpp. The default number of visibility graph tests is 1000. Change this number in line 57 of main.cpp if desired.
+
+3. Compile the path planning code by using the "make pathplan.exe" command.
+
+4. Run the path planning program with the "./pathplan.exe" command (or "nohup ./pathplan.exe &"). The program requires no input, and will write the testing results to "output.out". All of the generated polygon files are collected in "output_polygons.out".
+
+5. Compile the post-processing code using "make postprocess.exe".
+
+6. Run the post-processing code with the "./postprocess.exe" command. Provide the "output.out" filename from step 4 when prompted. This program outputs two files in a MATLAB-friendly format: "post_process_vis_graph.out" and "post_process_AStar.out".
+
+7. Copy the two files from step 6 into the same folder as the MATLAB "Post_Process.m" file. Enter the visibility graph's filename in line 9 of the m-file, and the A*'s filename in line 101. Run the script to produce plots.
+
+
+Polygon and Solution Path Visualization
+
+1. Generate a polygon obstacle file in the format described below. This can be done either manually or by using one of the maps produced by the Testing Mode.
+
+2. Generate a solution path using either the single-run mode or the testing mode. Save this solution path in a text file.
+
+3. Save both test files in the same folder as "Draw_Polygons_and_Solutions.m". Enter the filename of the polygon file in line 4. Enter the filename of the solution path file in line 29.
+
+4. Run the script, which will produce a single plot.
+
+--------------------------------------------------------------------------------
+
 List
 
 This is a singly-linked list code that can hold any type of data. Note that it uses templates, so List must be used like List<T>, where T is the type of data to store in list.

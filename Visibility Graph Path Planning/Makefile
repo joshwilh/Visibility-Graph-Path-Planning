@@ -6,6 +6,9 @@ CXXFLAGS = -Wall -Werror -pedantic --std=c++11 $(debug_or_optimize)
 pathplan.exe: search_functions.cpp Tree_Node.cpp Tree.cpp AStarProblem.cpp AStarState.cpp preprocessing.cpp main.cpp
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
+postprocess.exe: postprocess.cpp
+	$(CXX) $(CXXFLAGS) $^ -o $@
+
 .SUFFIXES:
 
 .PHONY: clean
