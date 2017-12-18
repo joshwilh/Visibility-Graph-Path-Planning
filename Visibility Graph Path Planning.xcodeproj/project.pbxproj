@@ -14,6 +14,7 @@
 		0376AE641FAE42EC00AB9841 /* search_functions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03F76ABC1F928ABD00D8AFCC /* search_functions.cpp */; };
 		0376AE671FAE436100AB9841 /* AStarProblem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0376AE651FAE436100AB9841 /* AStarProblem.cpp */; };
 		037BA06F1FD395DC00F9ABEB /* postprocess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 037BA06E1FD395DC00F9ABEB /* postprocess.cpp */; };
+		039144E91FE7819A005473D0 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 039144E81FE7819A005473D0 /* Makefile */; };
 		03A7546E1F94E66A0022091A /* preprocessing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03A7546D1F94E66A0022091A /* preprocessing.cpp */; };
 /* End PBXBuildFile section */
 
@@ -48,6 +49,7 @@
 		0376AE661FAE436100AB9841 /* AStarProblem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AStarProblem.h; sourceTree = "<group>"; };
 		037BA06C1FD395DC00F9ABEB /* postprocess */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = postprocess; sourceTree = BUILT_PRODUCTS_DIR; };
 		037BA06E1FD395DC00F9ABEB /* postprocess.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = postprocess.cpp; sourceTree = "<group>"; };
+		039144E81FE7819A005473D0 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		03A593C71FCA884D00DB9755 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		03A7546C1F94D9C80022091A /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = SOURCE_ROOT; };
 		03A7546D1F94E66A0022091A /* preprocessing.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = preprocessing.cpp; sourceTree = "<group>"; };
@@ -126,6 +128,7 @@
 		037BA06D1FD395DC00F9ABEB /* postprocess */ = {
 			isa = PBXGroup;
 			children = (
+				039144E81FE7819A005473D0 /* Makefile */,
 				037BA06E1FD395DC00F9ABEB /* postprocess.cpp */,
 			);
 			path = postprocess;
@@ -224,6 +227,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				039144E91FE7819A005473D0 /* Makefile in Sources */,
 				037BA06F1FD395DC00F9ABEB /* postprocess.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
